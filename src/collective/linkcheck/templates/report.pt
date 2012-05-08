@@ -1,0 +1,49 @@
+<table class="listing" i18n:domain="collective.linkcheck">
+  <tr>
+    <th i18n:translate="">URL</th>
+    <th i18n:translate="">Status</th>
+    <th i18n:translate="">Age</th>
+    <th i18n:translate="">Retry</th>
+  </tr>
+  <tr tal:repeat="entry view/data">
+    <td>
+      <a tal:attributes="href entry/url" tal:content="entry/url" />
+      <dl class="collapsible collapsedOnLoad">
+        <dt class="collapsibleHeader" i18n:translate="">
+          Pages:
+          <tal:paths i18n:name="referers" replace="python: len(entry['referers'])" />;
+          Locations:
+          <tal:paths i18n:name="paths" replace="python: len(entry['paths'])" />
+        </dt>
+        <dd class="collapsibleContent">
+          <span i18n:translate="">Referring pages:</span>
+          <ul>
+            <li tal:repeat="referer entry/referers">
+              <a tal:attributes="href referer"
+                 tal:content="referer" />
+            </li>
+          </ul>
+          <span i18n:translate="">HTML locations:</span>
+          <ul>
+            <li tal:repeat="path entry/paths">
+              <span tal:content="path" />
+            </li>
+          </ul>
+        </dd>
+      </dl>
+    </td>
+    <td tal:content="entry/status" />
+    <td>
+      <span i18n:translate="" tal:condition="entry/age">
+        <tal:seconds i18n:name="age" tal:replace="entry/age" /> seconds
+      </span>
+    </td>
+    <td>
+      <a tal:condition="not: entry/queued"
+         tal:attributes="href string:${view/enqueue_url}?enqueue=${entry/url}">
+        <span i18n:translate="">Enqueue</span>
+        <img tal:attributes="src string:${view/portal_url}/add_icon.png" />
+      </a>
+    </td>
+  </tr>
+</table>

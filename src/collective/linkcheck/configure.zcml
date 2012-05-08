@@ -1,0 +1,54 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:browser="http://namespaces.zope.org/browser"
+   xmlns:i18n="http://namespaces.zope.org/i18n"
+   xmlns:five="http://namespaces.zope.org/five"
+   xmlns:zcml="http://namespaces.zope.org/zcml"
+   xmlns:plone="http://namespaces.plone.org/plone"
+   xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+   i18n_domain="collective.linkcheck">
+
+  <!-- Setup -->
+
+  <genericsetup:registerProfile
+      name="default"
+      title="Link validity checking and reporting tools"
+      directory="profiles/default"
+      description="Installs tool, control panel and default settings."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <!-- Lifecycle events -->
+
+  <subscriber
+      for="zope.traversing.interfaces.IBeforeTraverseEvent"
+      handler=".events.before_traverse"
+      />
+
+  <subscriber
+      for="zope.publisher.interfaces.IEndRequestEvent"
+      handler=".events.end_request"
+      />
+
+  <!-- Control panel -->
+
+  <browser:page
+      name="linkcheck-controlpanel"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".controlpanel.ControlPanel"
+      permission="cmf.ManagePortal"
+      layer=".interfaces.ILayer"
+      />
+
+  <browser:viewlet
+      for="*"
+      name="collective.linkcheck.stats"
+      manager="plone.app.layout.viewlets.interfaces.IBelowContent"
+      class=".browser.StatsViewlet"
+      view=".controlpanel.ControlPanel"
+      template="templates/stats.pt"
+      layer=".interfaces.ILayer"
+      permission="cmf.ManagePortal"
+      />
+
+</configure>

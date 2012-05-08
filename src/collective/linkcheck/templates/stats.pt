@@ -1,0 +1,16 @@
+<fieldset i18n:domain="collective.linkcheck">
+  <legend i18n:translate="">Statistics</legend>
+  <dl>
+    <dt i18n:translate="">Active links</dt>
+    <dd tal:content="view/active_count" />
+
+    <dt i18n:translate="">In queue</dt>
+    <dd tal:content="string:${view/queue_ratio}%" />
+
+    <dt i18n:translate="">Average entropy</dt>
+    <dd i18n:translate="">
+      <span i18n:name="count" tal:replace="view/average_entropy" />
+      updates per transaction.
+    </dd>
+</dl>
+</fieldset>
