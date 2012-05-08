@@ -66,7 +66,7 @@ def end_request(event):
         encoding = "latin-1"
 
     try:
-        document = response.body.decode(encoding)
+        document = response.body.decode(encoding, 'ignore')
     except UnicodeDecodeError as exc:
         logger.warn(exc)
         return
