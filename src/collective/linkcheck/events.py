@@ -1,6 +1,7 @@
 import time
 import datetime
 import logging
+import zlib
 import transaction
 
 from zope.annotation.interfaces import IAnnotations
@@ -65,8 +66,12 @@ def end_request(event):
     except:
         encoding = "latin-1"
 
+    body = response.body
+    if response.headers.get('content-encoding') == 'gzip':
+        body = zlib.decompress(body)
+
     try:
-        document = response.body.decode(encoding, 'ignore')
+        document = body.decode(encoding, 'ignore')
     except UnicodeDecodeError as exc:
         logger.warn(exc)
         return
