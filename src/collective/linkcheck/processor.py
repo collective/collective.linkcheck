@@ -73,7 +73,8 @@ def run(app, args):
                         r = requests.Response()
                         r.status_code = 504
                         r.url = url
-                    except requests.RequestException:
+                    except requests.RequestException as exc:
+                        logger.warn(exc)
                         r = requests.Response()
                         r.status_code = 503
                         r.url = url
