@@ -97,6 +97,7 @@ def run(app, args):
         return
 
     # Enter runloop
+    counter = 0
     while True:
         errors = set()
 
@@ -104,37 +105,38 @@ def run(app, args):
             # Synchronize database
             tool._p_jar.sync()
 
-            now = datetime.datetime.now()
+            if not counter % 3600:
+                now = datetime.datetime.now()
 
-            # This timestamp is the threshold for items that need an
-            # update.
-            needs_update = int(time.mktime(
-                (now - datetime.timedelta(hours=settings.interval)).\
-                timetuple()
-                ))
+                # This timestamp is the threshold for items that need an
+                # update.
+                needs_update = int(time.mktime(
+                    (now - datetime.timedelta(hours=settings.interval)).\
+                    timetuple()
+                    ))
 
-            # This timestamp is the threshold for items that are no
-            # longer active.
-            expired = int(time.mktime(
-                (now - datetime.timedelta(days=settings.expiration)).\
-                timetuple()
-                ))
+                # This timestamp is the threshold for items that are no
+                # longer active.
+                expired = int(time.mktime(
+                    (now - datetime.timedelta(days=settings.expiration)).\
+                    timetuple()
+                    ))
 
-            discard = set()
-            for url, entry in tool.checked.items():
-                if url in tool.queue:
-                    continue
+                discard = set()
+                for url, entry in tool.checked.items():
+                    if url in tool.queue:
+                        continue
 
-                # Discard items that are expired
-                if entry[0] and entry[0] < expired:
-                    discard.add(url)
+                    # Discard items that are expired
+                    if entry[0] and entry[0] < expired:
+                        discard.add(url)
 
-                # Enqueue items with an out of date timestamp.
-                elif entry[0] and entry[0] < needs_update:
-                    tool.queue.put(url)
+                    # Enqueue items with an out of date timestamp.
+                    elif entry[0] and entry[0] < needs_update:
+                        tool.queue.put(url)
 
-            for url in discard:
-                del tool.checked[url]
+                for url in discard:
+                    del tool.checked[url]
 
             # Fetch set of URLs to check (up to concurrency level).
             urls = tool.queue[:settings.concurrency]
@@ -166,14 +168,17 @@ def run(app, args):
 
             while responses:
                 response = responses.pop()
+                status = response.status_code
 
                 # This may be a redirect.
                 if response.history:
                     url = response.history[0].url
+                    if response.history[0].status_code == 301:
+                        status = 301
                 else:
                     url = response.url
 
-                updates.append((url, response.status_code))
+                updates.append((url, status))
 
             for url in internal:
                 # For now, we simply ignore internal links if we're
@@ -251,3 +256,4 @@ def run(app, args):
             logger.warn("error checking: %s." % url)
 
         time.sleep(1)
+        counter += 1
