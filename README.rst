@@ -84,8 +84,9 @@ There's a 3rd party product available, `gocept.linkchecker
 <https://intra.gocept.com/projects/projects/cmflinkchecker>`_ which
 relies on a separate process written in the `Grok
 <http://grok.zope.org>`_ framework to perform external
-link-checking. It communicates with Plone via XML-RPC. Note that this
-product has not been updated for Plone 4.
+link-checking. It communicates with Plone via XML-RPC. There's a Plone
+4 `compatibility branch
+<https://code.gocept.com/hg/public/gocept.linkchecker/>`_ available.
 
 
 Setting up tool in a ZODB mount point
