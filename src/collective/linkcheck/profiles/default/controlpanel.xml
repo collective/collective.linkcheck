@@ -6,7 +6,7 @@
     purge="False">
 
     <configlet
-        title="Link-checking"
+        title="Link validity"
         action_id="linkcheck"
         appId="collective.linkcheck"
         category="Products"
