@@ -1,6 +1,9 @@
-The system is an integrated solution and runs as a headless instance
-with no configuration required. Note that ZEO or other non-exclusive
-storage is required.
+The system is an integrated solution, with a headless instance
+processing items in the background.
+
+Note that ZEO or other shared storage is required. Meanwhile, this
+requirement provides for a simple implementation where the processor
+connects directly to the transactional storage.
 
 Compatibility: Plone 4+.
 
@@ -8,10 +11,11 @@ Compatibility: Plone 4+.
 Setup
 =====
 
-Add the package to your buildout eggs section, then install the add-on
-inside Plone.
+Add the package to your buildout, then install the add-on from inside
+Plone.
 
-Next, run the checking processor on an existing instance executable::
+Next, set up an instance to run the link checking processor. This can
+be an existing instance, or a separate one::
 
   $ bin/instance linkcheck
 
@@ -19,10 +23,26 @@ This process should always be running, but may be stopped and started
 at any time without data loss.
 
 
-Reporting
----------
+Control panel
+=============
 
-Visit the control panel to see the report or configure the system.
+Once the system is up and running, interaction happens through the
+control panel.
+
+The "Link validity" screen shows a report that lists links with a bad
+status. It's accessible from Plone's control panel::
+
+  http://localhost:8080/site/@@linkcheck-controlpanel
+
+This screen also contains a settings tab that provides configuration
+for concurrency level, checking interval and link expiration, as well
+as statistics about the number of links that are currently active and
+the queue size.
+
+Additional reading
+==================
+
+The material in this section is not required to use the add-on.
 
 
 Request lifecycle
@@ -39,8 +59,36 @@ mode available where the processor uses Zope's own publisher to test
 internal link validity (at the cost of additional system resources).
 
 
-Setting up a separate ZODB mount point
---------------------------------------
+Link status
+-----------
+
+In terms of link validity, a good status is either ``200 OK`` or ``302
+Moved Temporarily``, a neutral status is a good link which has turned
+bad, or not been checked, and a bad status is everything else,
+including ``301 Moved Permanently``.
+
+In any case, the status of an external link is updated only once per
+the configured interval which is 24 hours by default.
+
+
+History
+-------
+
+Link validity checking has previously been a core functionality in
+Plone, but starting from the 4.x-series, there is no such
+capability. It's been proposed to bring it back into the core (see
+`PLIP #10987 <https://dev.plone.org/ticket/10987>`_), but the idea has
+since been retired.
+
+There's a 3rd party product available, `gocept.linkchecker
+<https://intra.gocept.com/projects/projects/cmflinkchecker>`_ which
+relies on a separate process written in Django to perform external
+link-checking. It communicates with Plone via XML-RPC. Note that this
+product has not been updated for Plone 4.
+
+
+Setting up tool in a ZODB mount point
+-------------------------------------
 
 The package installs a Zope 2 utility in the site root. The tool
 updates rather frequently and the system administrator might consider
@@ -72,13 +120,13 @@ the add-on for it to work.
 
 
 License
--------
+=======
 
 GPLv3 (http://www.gnu.org/licenses/gpl.html).
 
 
 Author
-------
+======
 
 Malthe Borch <mborch@gmail.com>
 
