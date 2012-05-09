@@ -33,9 +33,24 @@
       </dl>
     </td>
     <td tal:content="entry/status" />
-    <td>
-      <span i18n:translate="" tal:condition="entry/age">
-        <tal:seconds i18n:name="age" tal:replace="entry/age" /> seconds
+    <td tal:define="seconds entry/age">
+      <span i18n:translate="" tal:condition="python: 2 &lt; seconds &lt; 120">
+        <tal:seconds i18n:name="age" tal:replace="seconds" /> seconds
+      </span>
+      <span i18n:translate="" tal:condition="python: 120 &lt; seconds &lt; 3600">
+        <tal:seconds i18n:name="age" tal:replace="python: seconds // 60" /> minutes
+      </span>
+      <span i18n:translate="" tal:condition="python: 3600 &lt;= seconds &lt; 7200">
+        An hour
+      </span>
+      <span i18n:translate="" tal:condition="python: 7200 &lt;= seconds &lt; 3600 * 24">
+        <tal:seconds i18n:name="age" tal:replace="python: seconds // 3600" /> hours
+      </span>
+      <span i18n:translate="" tal:condition="python: 3600  * 24 &lt;= seconds &lt; 3600 * 24 * 2">
+        A day
+      </span>
+      <span i18n:translate="" tal:condition="python: 3600  * 24 * 2 &lt;= seconds">
+        <tal:seconds i18n:name="age" tal:replace="python: seconds // (3600 * 24)" /> days
       </span>
     </td>
     <td>
