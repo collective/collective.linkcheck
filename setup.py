@@ -14,7 +14,8 @@ version = '1.0'
 
 setup(name='collective.linkcheck',
       version=version,
-      description="Add-on for Plone that provides internal and external link validity checking.",
+      description="Add-on for Plone that provides link "
+                  "validity checking and reporting.",
       long_description='\n'.join([
           read('README.rst'),
           read('CHANGES.rst'),
@@ -27,7 +28,7 @@ setup(name='collective.linkcheck',
       keywords='plone link-checking',
       author='Malthe Borch',
       author_email='mborch@gmail.com',
-      license="GPLv3+",
+      license="GPLv2+",
       packages=find_packages('src'),
       package_dir={'': 'src'},
       namespace_packages=['collective'],
