@@ -103,6 +103,13 @@ class LinkCheckTool(SimpleItem):
 
         # If the status changed, we update the entry.
         if status != entry[1] or not entry[0]:
+
+            # If the status was previously good, then we clear the
+            # status. What this means is that we'll wait for the next
+            # check to declare a bad status (it might be temporary).
+            if entry[1] == 200:
+                status = None
+
             self.checked[href] = timestamp, status, entry[2], entry[3]
             return
 
