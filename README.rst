@@ -82,7 +82,8 @@ since been retired.
 
 There's a 3rd party product available, `gocept.linkchecker
 <https://intra.gocept.com/projects/projects/cmflinkchecker>`_ which
-relies on a separate process written in Django to perform external
+relies on a separate process written in the `Grok
+<http://grok.zope.org>`_ framework to perform external
 link-checking. It communicates with Plone via XML-RPC. Note that this
 product has not been updated for Plone 4.
 
