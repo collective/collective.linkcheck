@@ -43,6 +43,8 @@ def run(app, args):
     logger.setLevel(level)
     logger.info("looking for sites...")
 
+    session = requests.Session(timeout=5)
+
     tasks = []
     for name, item in app.objectItems():
         if IPloneSiteRoot.providedBy(item):
@@ -68,7 +70,7 @@ def run(app, args):
                     url = q.get()
 
                     try:
-                        r = requests.get(url, timeout=5)
+                        r = session.get(url)
                     except requests.Timeout:
                         r = requests.Response()
                         r.status_code = 504
@@ -85,7 +87,7 @@ def run(app, args):
             q = Queue()
             for i in range(settings.concurrency):
                 t = threading.Thread(target=worker)
-                t.daemon = False
+                t.daemon = True
                 t.start()
 
             logger.info("%d worker threads started." % settings.concurrency)
