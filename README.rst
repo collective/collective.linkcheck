@@ -39,6 +39,15 @@ for concurrency level, checking interval and link expiration, as well
 as statistics about the number of links that are currently active and
 the queue size.
 
+To subscribe to alerts, there's an RSS-representation available::
+
+  http://localhost:8080/site/@@linkcheck-feed
+
+Note that this view requires the "Manage portal" permission. To allow
+integration with other services, a self-authenticating link is
+available from the report screen.
+
+
 Additional reading
 ==================
 

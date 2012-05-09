@@ -1,3 +1,12 @@
+<p i18n:domain="collective.linkcheck">
+  <span class="discreet" i18n:translate="">
+    RSS-feed available. Click the orange icon.
+  </span>
+  <a tal:attributes="href string:${view/portal_url}/@@linkcheck-feed?auth=${view/auth}">
+    <img tal:attributes="src string:${view/portal_url}/rss.png" alt="RSS" />
+  </a>
+</p>
+
 <table class="listing" i18n:domain="collective.linkcheck">
   <tr>
     <th i18n:translate="">URL</th>

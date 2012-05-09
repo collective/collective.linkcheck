@@ -2,18 +2,24 @@ import time
 import logging
 import datetime
 import transaction
+import hashlib
+import base64
 
 from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zExceptions import Redirect
 from ZPublisher.HTTPResponse import status_reasons
+from zExceptions import Redirect
+from zExceptions import Unauthorized
 
 from zope.schema import Field
+from zope.security import checkPermission
 
 from plone.memoize.instance import memoize
 from plone.z3cform import layout
 from plone.app.registry.browser import controlpanel
+from plone.keyring.interfaces import IKeyManager
+from zope.component import getUtility
 
 from collective.linkcheck.interfaces import ISettings
 from collective.linkcheck import MessageFactory as _
@@ -65,49 +71,12 @@ class ReportWidget(widget.Widget):
         return self.form.context.portal_url()
 
     @property
+    def auth(self):
+        return self.form.__parent__.get_auth_token()
+
+    @property
     def data(self):
-        tool = getToolByName(self.form.context, 'portal_linkcheck')
-
-        count = self.count
-        rows = []
-
-        now = datetime.datetime.now()
-        timestamp = int(time.mktime(now.timetuple()))
-
-        entries = list(tool.checked.items())
-        entries.sort(
-            key=lambda (url, entry): (
-                triage(None if url in tool.queue else entry[1]),
-                entry[0]),
-            reverse=True,
-            )
-
-        for url, entry in entries:
-            status = entry[1]
-
-            # Skip entries with unknown status.
-            if not status:
-                continue
-
-            # Break out of iteration when we reach a good status.
-            if entry[1] == 200:
-                break
-
-            # Or hit the maximum row count.
-            if len(rows) == count:
-                break
-
-            age = timestamp - (entry[0] or timestamp)
-            rows.append({
-                'url': url,
-                'age': age,
-                'status': "%d %s" % (status, status_reasons.get(status, '')),
-                'paths': entry[2],
-                'referers': entry[3],
-                'queued': url in tool.queue,
-                })
-
-        return rows
+        return self.form.__parent__.list_entries(self.count)
 
 
 class ReportGroup(group.Group):
@@ -150,6 +119,8 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
     buttons += controlpanel.RegistryEditForm.buttons
     handlers = controlpanel.RegistryEditForm.handlers.copy()
 
+    rss_template = ViewPageTemplateFile("templates/rss.pt")
+
     @property
     def tool(self):
         return getToolByName(self.context, 'portal_linkcheck')
@@ -163,6 +134,56 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             raise Redirect(location)
 
         super(ControlPanelEditForm, self).update()
+
+    def get_auth_token(self):
+        manager = getUtility(IKeyManager)
+        secret = manager.secret()
+        sha = hashlib.sha1(self.context.absolute_url())
+        sha.update(secret)
+        sha.update("RSS")
+        return sha.hexdigest()
+
+    def list_entries(self, count=100):
+        rows = []
+
+        now = datetime.datetime.now()
+        timestamp = int(time.mktime(now.timetuple()))
+
+        entries = list(self.tool.checked.items())
+        entries.sort(
+            key=lambda (url, entry): (
+                triage(None if url in self.tool.queue else entry[1]),
+                entry[0]),
+            reverse=True,
+            )
+
+        for url, entry in entries:
+            status = entry[1]
+
+            # Skip entries with unknown status.
+            if not status:
+                continue
+
+            # Break out of iteration when we reach a good status.
+            if entry[1] == 200:
+                break
+
+            # Or hit the maximum row count.
+            if len(rows) == count:
+                break
+
+            age = timestamp - (entry[0] or timestamp)
+            rows.append({
+                'url': url,
+                'age': age,
+                'date': datetime.datetime.fromtimestamp(entry[0] or timestamp),
+                'status': "%d %s" % (status, status_reasons.get(status, '')),
+                'paths': entry[2],
+                'referers': entry[3],
+                'queued': url in self.tool.queue,
+                })
+
+        return rows
 
     @button.buttonAndHandler(_(u"Clear"), name='clear')
     def handleSchedule(self, action):
@@ -178,8 +199,34 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         IStatusMessage(self.request).addStatusMessage(
             _(u"All data cleared."), "info")
 
+    def RSS(self, auth):
+        if auth is None:
+            if not checkPermission('cmf.ManagePortal', self.context):
+                raise Unauthorized(self.__name__)
+
+        if auth != self.get_auth_token():
+            raise Unauthorized(self.__name__)
+
+        body = self.rss_template()
+
+        self.request.response.setHeader('Content-Type', 'application/rss+xml')
+        self.request.response.setHeader(
+            'Content-Disposition',
+            'attachment; filename="linkcheck.rss"'
+            )
+
+        return body
+
+
+def RSS(form, auth=None):
+    """Render feed."""
+
+    return form.form_instance.RSS(auth)
 
 ControlPanel = layout.wrap_form(
     ControlPanelEditForm,
     controlpanel.ControlPanelFormWrapper
     )
+
+
+ControlPanel.RSS = RSS

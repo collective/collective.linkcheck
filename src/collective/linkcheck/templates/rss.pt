@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:syn="http://purl.org/rss/1.0/modules/syndication/"
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    i18n:domain="collective.linkcheck"
+    tal:define="rows view/list_entries">
+
+  <channel rdf:about="" tal:attributes="rdf:about request/URL">
+    <title tal:content="view/label">The title</title>
+    <link tal:content="context/portal_url">http://url.to.portal</link>
+
+    <description i18n:translate="">
+      This feed contains entries for links with a bad status.
+    </description>
+
+    <image
+        rdf:resource=""
+        tal:attributes="rdf:resource string:${context/portal_url}/logo.png" />
+
+    <items>
+      <rdf:Seq>
+         <tal:block repeat="entry rows"><rdf:li rdf:resource="" tal:attributes="rdf:resource entry/url" /></tal:block>
+      </rdf:Seq>
+    </items>
+
+  </channel>
+
+  <item tal:repeat="entry rows"
+        rdf:about="" tal:attributes="rdf:about entry/url">
+    <title tal:content="entry/status" />
+    <link tal:content="entry/url" />
+    <dc:date tal:content="python: entry['date'].isoformat()" />
+  </item>
+
+</rdf:RDF>

@@ -37,6 +37,16 @@
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       class=".controlpanel.ControlPanel"
       permission="cmf.ManagePortal"
+      allowed_attributes="RSS"
+      layer=".interfaces.ILayer"
+      />
+
+  <browser:page
+      name="linkcheck-feed"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".controlpanel.ControlPanel"
+      permission="zope.Public"
+      attribute="RSS"
       layer=".interfaces.ILayer"
       />
 
