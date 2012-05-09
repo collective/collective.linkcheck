@@ -7,6 +7,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zExceptions import Redirect
+from ZPublisher.HTTPResponse import status_reasons
 
 from zope.schema import Field
 
@@ -100,7 +101,7 @@ class ReportWidget(widget.Widget):
             rows.append({
                 'url': url,
                 'age': age,
-                'status': status,
+                'status': "%d %s" % (status, status_reasons.get(status, '')),
                 'paths': entry[2],
                 'referers': entry[3],
                 'queued': url in tool.queue,
