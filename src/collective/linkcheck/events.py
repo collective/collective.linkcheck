@@ -68,7 +68,13 @@ def end_request(event):
 
     body = response.body
     if response.headers.get('content-encoding') == 'gzip':
-        body = zlib.decompress(body)
+        try:
+            body = zlib.decompress(body)
+        except zlib.error as exc:
+            logger.warn(
+                "Unable to decompress response with using gzip: %s" % exc
+                )
+            return
 
     try:
         document = body.decode(encoding, 'ignore')
