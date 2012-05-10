@@ -68,6 +68,9 @@
         <span i18n:translate="">Enqueue</span>
         <img tal:attributes="src string:${view/portal_url}/add_icon.png" />
       </a>
+      <span tal:condition="entry/queued" i18n:translate="">
+        In queue
+      </span>
     </td>
   </tr>
 </table>
