@@ -1,10 +1,11 @@
 import time
 import datetime
 import logging
-import zlib
+import gzip
 import transaction
 
 from zope.annotation.interfaces import IAnnotations
+from cStringIO import StringIO
 
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFCore.utils import getToolByName
@@ -69,11 +70,9 @@ def end_request(event):
     body = response.body
     if response.headers.get('content-encoding') == 'gzip':
         try:
-            body = zlib.decompress(body)
-        except zlib.error as exc:
-            logger.warn(
-                "Unable to decompress response with using gzip: %s" % exc
-                )
+            body = gzip.GzipFile(fileobj=StringIO(body)).read()
+        except BaseException as exc:
+            logger.warn(exc)
             return
 
     try:

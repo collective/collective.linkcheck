@@ -3,7 +3,8 @@ Changes
 
 In next release ...
 
-- Catch exception raised on gzip decompression.
+- Use ``gzip`` library to correctly read and decompress
+  zlib-compressed responses.
 
 1.0 (2012-05-10)
 ----------------
