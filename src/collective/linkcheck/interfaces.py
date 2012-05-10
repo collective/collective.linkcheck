@@ -37,6 +37,14 @@ class ISettings(Interface):
         default=7,
         )
 
+    transaction_size = schema.Int(
+        title=_(u'Transaction size'),
+        description=_(u'The number of items pulled out of the worker queue '
+                      u'for every transaction.'),
+        required=True,
+        default=100,
+        )
+
     use_publisher = schema.Bool(
         title=_(u'Use publisher'),
         description=_(u"Select this option to publish internal links "

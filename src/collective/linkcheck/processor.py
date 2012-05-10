@@ -138,8 +138,8 @@ def run(app, args):
                 for url in discard:
                     del tool.checked[url]
 
-            # Fetch set of URLs to check (up to concurrency level).
-            urls = tool.queue[:settings.concurrency]
+            # Fetch set of URLs to check (up to transaction size).
+            urls = tool.queue[:settings.transaction_size]
             if not urls:
                 continue
 
