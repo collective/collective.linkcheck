@@ -1,9 +1,7 @@
 The system is an integrated solution, with a headless instance
 processing items in the background.
 
-Note that ZEO or other shared storage is required. Meanwhile, this
-requirement provides for a simple implementation where the processor
-connects directly to the transactional storage.
+ZEO or other shared storage is required.
 
 Compatibility: Plone 4+.
 
@@ -27,57 +25,81 @@ Control panel
 =============
 
 Once the system is up and running, interaction happens through the
-control panel.
-
-The "Link validity" screen shows a report that lists links with a bad
-status. It's accessible from Plone's control panel::
+"Link validity" control panel::
 
   http://localhost:8080/site/@@linkcheck-controlpanel
 
-This screen also contains a settings tab that provides configuration
-for concurrency level, checking interval and link expiration, as well
-as statistics about the number of links that are currently active and
-the queue size.
+It's available from Plone's control panel overview.
 
-To subscribe to alerts, there's an RSS-representation available::
+*Reporting*
 
-  http://localhost:8080/site/@@linkcheck-feed
+    The report tab lists current problems.
 
-Note that this view requires the "Manage portal" permission. To allow
-integration with other services, a self-authenticating link is
-available from the report screen.
+*Notification*
+
+    An alert system is provided in the form of an RSS-feed::
+
+      http://localhost:8080/site/@@linkcheck-feed
+
+    Note that this view requires the "Manage portal" permission. To allow
+    integration with other services, a self-authenticating link is
+    available from the report screen:
+
+       RSS-feed available. Click the orange icon |rss|
+
+    To set up e-mail notification, configure an RSS-driven newsletter
+    with this feed and adjust the frequency to match the update
+    interval (i.e. every morning). There's probably a lot of choice
+    here. `MailChimp <http://www.mailchimp.com>`_ makes it very easy.
+
+*Settings*
+
+    The settings tab on the control panel provides configuration for
+    concurrency level, checking interval and link expiration, as well as
+    statistics about the number of links that are currently active and the
+    queue size.
+
+    There is also a setting available that lets the processor use the
+    publisher to test internal link validity (at the cost of
+    additional system resources). If this mode is enabled, the
+    processor will attempt to publish the internal link and check that
+    the response is good.
 
 
-Additional reading
-==================
-
-The material in this section is not required to use the add-on.
+.. |RSS| image:: http://plone.org/rss.png
 
 
-Request lifecycle
------------------
+How does it work?
+=================
 
-The system hooks into the request lifecycle and keeps track of the
-status of outgoing HTML responses as well as the links present in
-those responses.
+When the add-on is installed, Plone will pass each HTML response
+through a collection step that keeps track of:
 
-In the default configuration, it's assumed that the site is visited
-regularly and exhaustively by a search robot or other crawling
-service. This is typically true for a public site. There is a also a
-mode available where the processor uses Zope's own publisher to test
-internal link validity (at the cost of additional system resources).
+1. The status code of outgoing HTML responses;
+2. The hyperlinks which appear in the response body, if available.
+
+This happens very quickly. The `lxml
+<http://pypi.python.org/pypi/lxml>`_ library is used to parse and
+search the response document for links.
+
+The benefit of the approach is that we don't need to spend additional
+resources to check the validity of pages that we've already rendered.
+
+There's an assumption here that the site is visited regularly and
+exhaustively by a search robot or other crawling service. This is
+typically true for a public site.
 
 
 Link status
 -----------
 
-In terms of link validity, a good status is either ``200 OK`` or ``302
-Moved Temporarily``, a neutral status is a good link which has turned
-bad, or not been checked, and a bad status is everything else,
-including ``301 Moved Permanently``.
+A good status is either ``200 OK`` or ``302 Moved Temporarily``; a
+neutral status is a good link which has turned bad, or not been
+checked; a bad status is everything else, including ``301 Moved
+Permanently``.
 
 In any case, the status of an external link is updated only once per
-the configured interval which is 24 hours by default.
+the configured interval (24 hours by default).
 
 
 History
@@ -95,15 +117,24 @@ relies on a separate process written in the `Grok
 <http://grok.zope.org>`_ framework to perform external
 link-checking. It communicates with Plone via XML-RPC. There's a Plone
 4 `compatibility branch
-<https://code.gocept.com/hg/public/gocept.linkchecker/>`_ available.
+<https://code.gocept.com/hg/public/gocept.linkchecker/>`_
+available. This product demands significantly more resources (both CPU
+and memory) because it publishes all internal links at a regular
+interval.
 
 
-Setting up tool in a ZODB mount point
--------------------------------------
+Performance
+===========
 
-The package installs a Zope 2 utility in the site root. The tool
-updates rather frequently and the system administrator might consider
-setting up the tool on a separate mount point.
+In the default configuration, the system should not incur significant
+overhead.
+
+That said, we've put the data into a Zope 2 tool to allow easily
+mounting it into a separate database.
+
+
+Keeping a separate database for updates
+---------------------------------------
 
 Using the ``plone.recipe.zope2instance`` recipe for buildout, this is
 how you would configure a mount point for a Plone site located at
