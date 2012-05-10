@@ -3,6 +3,8 @@ Changes
 
 In next release ...
 
+- Added support for HEAD request.
+
 - Use ``gzip`` library to correctly read and decompress
   zlib-compressed responses.
 

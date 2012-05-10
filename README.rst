@@ -39,7 +39,7 @@ It's available from Plone's control panel overview.
 
     An alert system is provided in the form of an RSS-feed::
 
-      http://localhost:8080/site/@@linkcheck-feed
+      http://localhost:8080/site/++linkcheck++feed.rss
 
     Note that this view requires the "Manage portal" permission. To allow
     integration with other services, a self-authenticating link is

@@ -3,17 +3,14 @@ import logging
 import datetime
 import transaction
 import hashlib
-import base64
 
 from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ZPublisher.HTTPResponse import status_reasons
 from zExceptions import Redirect
-from zExceptions import Unauthorized
 
 from zope.schema import Field
-from zope.security import checkPermission
 
 from plone.memoize.instance import memoize
 from plone.z3cform import layout
@@ -199,14 +196,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         IStatusMessage(self.request).addStatusMessage(
             _(u"All data cleared."), "info")
 
-    def RSS(self, auth):
-        if auth is None:
-            if not checkPermission('cmf.ManagePortal', self.context):
-                raise Unauthorized(self.__name__)
-
-        if auth != self.get_auth_token():
-            raise Unauthorized(self.__name__)
-
+    def RSS(self):
         body = self.rss_template()
 
         self.request.response.setHeader('Content-Type', 'application/rss+xml')
@@ -218,15 +208,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         return body
 
 
-def RSS(form, auth=None):
-    """Render feed."""
-
-    return form.form_instance.RSS(auth)
-
 ControlPanel = layout.wrap_form(
     ControlPanelEditForm,
     controlpanel.ControlPanelFormWrapper
     )
-
-
-ControlPanel.RSS = RSS

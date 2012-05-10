@@ -41,12 +41,15 @@
       layer=".interfaces.ILayer"
       />
 
+  <!-- Feed -->
+
+  <adapter name="linkcheck" factory=".traversal.FeedTraverser" />
+
   <browser:page
       name="linkcheck-feed"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       class=".controlpanel.ControlPanel"
       permission="zope.Public"
-      attribute="RSS"
       layer=".interfaces.ILayer"
       />
 
