@@ -38,9 +38,10 @@ class ISettings(Interface):
         )
 
     use_publisher = schema.Bool(
-        title=_(u'Use publisher to verify internal links'),
-        description=_(u'Enable this setting to use the Zope publisher '
-                      u'to check unknown internal links.'),
+        title=_(u'Use publisher'),
+        description=_(u"Select this option to publish internal links "
+                      u"that have not been requested, and thus have no "
+                      u"recorded response status."),
         required=False,
         default=False,
         )
