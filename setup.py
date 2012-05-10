@@ -23,6 +23,7 @@ setup(name='collective.linkcheck',
       classifiers=[
         "Framework :: Plone",
         "Framework :: Zope2",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         ],
       keywords='plone link-checking',
