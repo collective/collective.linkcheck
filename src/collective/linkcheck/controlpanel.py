@@ -3,6 +3,7 @@ import logging
 import datetime
 import transaction
 import hashlib
+import urllib
 
 from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
@@ -125,6 +126,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
     def update(self):
         url = self.request.get('enqueue')
         if url is not None:
+            url = urllib.unquote_plus(url)
             self.tool.enqueue(url)
             transaction.commit()
             location = self.request.getURL()
@@ -172,6 +174,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             age = timestamp - (entry[0] or timestamp)
             rows.append({
                 'url': url,
+                'quoted_url': urllib.quote_plus(url),
                 'age': age,
                 'date': datetime.datetime.fromtimestamp(entry[0] or timestamp),
                 'status': "%d %s" % (status, status_reasons.get(status, '')),

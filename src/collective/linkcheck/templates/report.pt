@@ -64,7 +64,7 @@
     </td>
     <td>
       <a tal:condition="not: entry/queued"
-         tal:attributes="href string:${view/enqueue_url}?enqueue=${entry/url}">
+         tal:attributes="href string:${view/enqueue_url}?enqueue=${entry/quoted_url}">
         <span i18n:translate="">Enqueue</span>
         <img tal:attributes="src string:${view/portal_url}/add_icon.png" />
       </a>

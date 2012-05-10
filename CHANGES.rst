@@ -3,6 +3,8 @@ Changes
 
 In next release ...
 
+- Quote URLs passed to the "Enqueue" action.
+
 - Added support for HEAD request.
 
 - Use ``gzip`` library to correctly read and decompress
