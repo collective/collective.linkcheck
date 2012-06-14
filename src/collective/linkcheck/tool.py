@@ -62,7 +62,11 @@ class LinkCheckTool(SimpleItem):
         referers = set((referer, ))
 
         registry = getUtility(IRegistry, context=self.aq_parent)
-        settings = registry.forInterface(ISettings)
+        try:
+            settings = registry.forInterface(ISettings)
+        except KeyError as exc:
+            logger.warn(exc)
+            return
 
         for href, paths in links:
             # If the hyperlink is not already in the work queue,
