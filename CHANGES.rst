@@ -1,6 +1,10 @@
 Changes
 =======
 
+In next release ...
+
+- Make report sortable.
+
 1.0.1 (2012-05-10)
 ------------------
 

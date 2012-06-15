@@ -7,70 +7,75 @@
   </a>
 </p>
 
-<table class="listing" i18n:domain="collective.linkcheck">
-  <tr>
-    <th i18n:translate="">URL</th>
-    <th i18n:translate="">Status</th>
-    <th i18n:translate="">Age</th>
-    <th i18n:translate="">Retry</th>
-  </tr>
-  <tr tal:repeat="entry view/data">
-    <td>
-      <a tal:attributes="href entry/url" tal:content="entry/url" />
-      <dl class="collapsible collapsedOnLoad">
-        <dt class="collapsibleHeader" i18n:translate="">
-          Pages:
-          <tal:paths i18n:name="referers" replace="python: len(entry['referers'])" />;
-          Locations:
-          <tal:paths i18n:name="paths" replace="python: len(entry['paths'])" />
-        </dt>
-        <dd class="collapsibleContent">
-          <span i18n:translate="">Referring pages:</span>
-          <ul>
-            <li tal:repeat="referer entry/referers">
-              <a tal:attributes="href referer"
-                 tal:content="referer" />
-            </li>
-          </ul>
-          <span i18n:translate="">HTML locations:</span>
-          <ul>
-            <li tal:repeat="path entry/paths">
-              <span tal:content="path" />
-            </li>
-          </ul>
-        </dd>
-      </dl>
-    </td>
-    <td tal:content="entry/status" />
-    <td tal:define="seconds entry/age">
-      <span i18n:translate="" tal:condition="python: 2 &lt; seconds &lt; 120">
-        <tal:seconds i18n:name="age" tal:replace="seconds" /> seconds
-      </span>
-      <span i18n:translate="" tal:condition="python: 120 &lt; seconds &lt; 3600">
-        <tal:seconds i18n:name="age" tal:replace="python: seconds // 60" /> minutes
-      </span>
-      <span i18n:translate="" tal:condition="python: 3600 &lt;= seconds &lt; 7200">
-        An hour
-      </span>
-      <span i18n:translate="" tal:condition="python: 7200 &lt;= seconds &lt; 3600 * 24">
-        <tal:seconds i18n:name="age" tal:replace="python: seconds // 3600" /> hours
-      </span>
-      <span i18n:translate="" tal:condition="python: 3600  * 24 &lt;= seconds &lt; 3600 * 24 * 2">
-        A day
-      </span>
-      <span i18n:translate="" tal:condition="python: 3600  * 24 * 2 &lt;= seconds">
-        <tal:seconds i18n:name="age" tal:replace="python: seconds // (3600 * 24)" /> days
-      </span>
-    </td>
-    <td>
-      <a tal:condition="not: entry/queued"
-         tal:attributes="href string:${view/enqueue_url}?enqueue=${entry/quoted_url}">
-        <span i18n:translate="">Enqueue</span>
-        <img tal:attributes="src string:${view/portal_url}/add_icon.png" />
-      </a>
-      <span tal:condition="entry/queued" i18n:translate="">
-        In queue
-      </span>
-    </td>
-  </tr>
+<table id="linkcheck-report" class="listing" i18n:domain="collective.linkcheck">
+  <thead>
+    <tr>
+      <th i18n:translate="">URL</th>
+      <th i18n:translate="">Status</th>
+      <th i18n:translate="">Age</th>
+      <th class="nosort" i18n:translate="">Retry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr tal:repeat="entry view/data">
+      <td>
+        <a tal:attributes="href entry/url" tal:content="entry/url" />
+        <dl class="collapsible collapsedOnLoad">
+          <dt class="collapsibleHeader" i18n:translate="">
+            Pages:
+            <tal:paths i18n:name="referers" replace="python: len(entry['referers'])" />;
+            Locations:
+            <tal:paths i18n:name="paths" replace="python: len(entry['paths'])" />
+          </dt>
+          <dd class="collapsibleContent">
+            <span i18n:translate="">Referring pages:</span>
+            <ul>
+              <li tal:repeat="referer entry/referers">
+                <a tal:attributes="href referer"
+                   tal:content="referer" />
+              </li>
+            </ul>
+            <span i18n:translate="">HTML locations:</span>
+            <ul>
+              <li tal:repeat="path entry/paths">
+                <span tal:content="path" />
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </td>
+      <td tal:content="entry/status" />
+      <td tal:define="seconds entry/age"
+          tal:attributes="class string:sortabledata-${seconds}">
+        <span i18n:translate="" tal:condition="python: 2 &lt; seconds &lt; 120">
+          <tal:seconds i18n:name="age" tal:replace="seconds" /> seconds
+        </span>
+        <span i18n:translate="" tal:condition="python: 120 &lt; seconds &lt; 3600">
+          <tal:seconds i18n:name="age" tal:replace="python: seconds // 60" /> minutes
+        </span>
+        <span i18n:translate="" tal:condition="python: 3600 &lt;= seconds &lt; 7200">
+          An hour
+        </span>
+        <span i18n:translate="" tal:condition="python: 7200 &lt;= seconds &lt; 3600 * 24">
+          <tal:seconds i18n:name="age" tal:replace="python: seconds // 3600" /> hours
+        </span>
+        <span i18n:translate="" tal:condition="python: 3600  * 24 &lt;= seconds &lt; 3600 * 24 * 2">
+          A day
+        </span>
+        <span i18n:translate="" tal:condition="python: 3600  * 24 * 2 &lt;= seconds">
+          <tal:seconds i18n:name="age" tal:replace="python: seconds // (3600 * 24)" /> days
+        </span>
+      </td>
+      <td>
+        <a tal:condition="not: entry/queued"
+           tal:attributes="href string:${view/enqueue_url}?enqueue=${entry/quoted_url}">
+          <span i18n:translate="">Enqueue</span>
+          <img tal:attributes="src string:${view/portal_url}/add_icon.png" />
+        </a>
+        <span tal:condition="entry/queued" i18n:translate="">
+          In queue
+        </span>
+      </td>
+    </tr>
+  </tbody>
 </table>
