@@ -1,3 +1,4 @@
+import re
 import time
 import datetime
 import logging
@@ -5,6 +6,7 @@ import logging
 from zc.queue import Queue
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
+from plone.memoize.volatile import cache
 
 from BTrees.OOBTree import OOBTree
 from AccessControl.SecurityInfo import ClassSecurityInfo
@@ -69,6 +71,9 @@ class LinkCheckTool(SimpleItem):
             return
 
         for href, paths in links:
+            if self.should_ignore(href, settings.ignore_list):
+                continue
+
             # If the hyperlink is not already in the work queue,
             # compare the provided timestamp to our database to see if
             # we need to check its validity. Note that internal links
@@ -116,6 +121,26 @@ class LinkCheckTool(SimpleItem):
 
             self.checked[href] = timestamp, status, entry[2], entry[3]
             return
+
+    @cache(lambda method, self, ignore_list: ignore_list)
+    def get_matchers(self, ignore_list):
+        matchers = []
+        for expression in ignore_list:
+            try:
+                matcher = re.compile(expression).search
+            except re.error:
+                pass
+            else:
+                matchers.append(matcher)
+
+        return matchers
+
+    def should_ignore(self, href, ignore_list):
+        for matcher in self.get_matchers(ignore_list):
+            if matcher(href):
+                return True
+
+        return False
 
 
 InitializeClass(LinkCheckTool)

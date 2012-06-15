@@ -3,6 +3,9 @@ Changes
 
 In next release ...
 
+- Add whitelist (ignore) option. This is a list of regular expressions
+  that match on links to prevent them from being recorded by the tool.
+
 - Make report sortable.
 
 1.0.1 (2012-05-10)

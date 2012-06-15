@@ -53,3 +53,16 @@ class ISettings(Interface):
         required=False,
         default=False,
         )
+
+    ignore_list = schema.Tuple(
+        title=_(u'Ignore list'),
+        description=_(u'Use regular expressions to prevent links '
+                      u'from appearing in the list. One expression per '
+                      u'line (e.g. "^http://bit.ly").'),
+        required=False,
+        value_type=schema.TextLine(),
+        default=(
+            u"^http://bit.ly",
+            u"^http://t.co",
+            ),
+        )
