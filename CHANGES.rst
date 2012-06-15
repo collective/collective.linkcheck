@@ -1,7 +1,8 @@
 Changes
 =======
 
-In next release ...
+1.0.2 (2012-06-15)
+------------------
 
 - Add whitelist (ignore) option. This is a list of regular expressions
   that match on links to prevent them from being recorded by the tool.
