@@ -150,13 +150,13 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
 
         entries = list(self.tool.checked.items())
         entries.sort(
-            key=lambda (url, entry): (
-                triage(None if url in self.tool.queue else entry[1]),
+            key=lambda (i, entry): (
+                triage(None if i in self.tool.queue else entry[1]),
                 entry[0]),
             reverse=True,
             )
 
-        for url, entry in entries:
+        for i, entry in entries:
             status = entry[1]
 
             # Skip entries with unknown status.
@@ -171,7 +171,9 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             if len(rows) == count:
                 break
 
+            url = self.tool.links[i]
             age = timestamp - (entry[0] or timestamp)
+
             rows.append({
                 'url': url,
                 'quoted_url': urllib.quote_plus(url),

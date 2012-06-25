@@ -10,7 +10,7 @@ def read(*pathnames):
     return open(os.path.join(os.path.dirname(__file__), *pathnames)).read().\
            decode('utf-8')
 
-version = '1.0.2'
+version = '1.1-dev'
 
 setup(name='collective.linkcheck',
       version=version,
@@ -40,7 +40,7 @@ setup(name='collective.linkcheck',
       # 2 environment, try the `fakezope2eggs` recipe
       install_requires=[
           'setuptools',
-          'zc.queue',
+          'zc.queue >= 1.3',
           'requests',
           'plone.z3cform',
       ],

@@ -39,7 +39,7 @@ def run(app, args):
     for handler in root.handlers:
         handler.setLevel(level)
 
-    logger = logging.getLogger("linkcheck.events")
+    logger = logging.getLogger("linkcheck.processor")
     logger.setLevel(level)
     logger.info("looking for sites...")
 
@@ -105,6 +105,12 @@ def run(app, args):
             # Synchronize database
             tool._p_jar.sync()
 
+            if not tool.is_available():
+                logger.warn("Tool not available; please run update step.")
+                logger.info("Sleeping for 10 seconds...")
+                time.sleep(10)
+                break
+
             if not counter % 3600:
                 now = datetime.datetime.now()
 
@@ -139,9 +145,11 @@ def run(app, args):
                     del tool.checked[url]
 
             # Fetch set of URLs to check (up to transaction size).
-            urls = tool.queue[:settings.transaction_size]
-            if not urls:
+            queued = tool.queue[:settings.transaction_size]
+            if not queued:
                 continue
+
+            urls = filter(None, map(tool.links.get, queued))
 
             # This keeps track of status updates, which we'll apply at
             # the end.
@@ -223,19 +231,21 @@ def run(app, args):
 
             while urls:
                 try:
-                    url = tool.queue.pull()
+                    i = tool.queue.pull()
                 except IndexError:
                     transaction.abort()
                     continue
 
                 try:
+                    url = tool.links[i]
                     urls.remove(url)
                 except KeyError:
-                    unchanged.append(url)
+                    unchanged.append(i)
 
             # This shouldn't happen to frequently.
-            for url in unchanged:
-                tool.queue.put(url)
+            for i in unchanged:
+                tool.queue.put(i)
+                url = tool.links[i]
                 logger.warn("putting back unprocessed url: %s." % url)
 
             for url in invalid:

@@ -52,6 +52,11 @@ def end_request(event):
 
     # Update the status of the present request.
     status = response.getStatus()
+
+    if not tool.is_available():
+        logger.warn("Tool not available; please run update step.")
+        return
+
     tool.update(event.request['PATH_INFO'], status)
 
     # Must be good response.

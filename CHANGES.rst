@@ -1,6 +1,15 @@
 Changes
 =======
 
+In next release ...
+
+- Datastructure optimization.
+
+  Use bucket-based data types when possible, and avoid copying strings
+  (instead using an integer-based lookup table).
+
+  Note: Migration required. Please run the upgrade step.
+
 1.0.2 (2012-06-15)
 ------------------
 

@@ -3,12 +3,14 @@ import time
 import datetime
 import logging
 
-from zc.queue import Queue
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 from plone.memoize.volatile import cache
 
-from BTrees.OOBTree import OOBTree
+from BTrees.IOBTree import IOBTree
+from BTrees.OIBTree import OIBTree
+from BTrees.IIBTree import IISet
+
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
@@ -16,6 +18,7 @@ from Products.CMFCore.utils import registerToolInterface
 
 from .interfaces import ILinkCheckTool
 from .interfaces import ISettings
+from .queue import CompositeQueue
 
 logger = logging.getLogger("linkcheck.events")
 
@@ -28,11 +31,26 @@ class LinkCheckTool(SimpleItem):
 
         # This is the work queue; items in this queue are scheduled
         # for link validity check.
-        self.queue = Queue()
+        self.queue = CompositeQueue()
 
-        # This is the link database. It maps a hyperlink (string) to a
+        # This is the link database. It maps a hyperlink index to a
         # tuple (timestamp, status, paths, referers).
-        self.checked = OOBTree()
+        self.checked = IOBTree()
+
+        # Indexes
+        self.index = OIBTree()
+        self.links = IOBTree()
+
+        # This is a counter that allows us to add new hyperlinks and
+        # provide an indexc quickly.
+        self.counter = 0
+
+    security.declarePrivate("is_available")
+    def is_available(self):
+        return hasattr(self, 'index') and \
+               hasattr(self, 'checked') and \
+               hasattr(self, 'queue') and \
+               hasattr(self, 'counter')
 
     security.declarePrivate("clear")
     def clear(self):
@@ -43,14 +61,22 @@ class LinkCheckTool(SimpleItem):
                 break
 
         self.checked.clear()
+        self.index.clear()
+        self.counter = 0
 
     security.declarePrivate("enqueue")
     def enqueue(self, url):
-        self.queue.put(url)
-        entry = self.checked.get(url)
-        if entry is not None:
+        index = self.index.get(url)
+
+        if index is None:
+            index = self.store(url)
+        else:
+            entry = self.checked.get(-1 if index is None else index)
             entry = None, entry[1], entry[2], entry[3]
-            self.checked[url] = entry
+            self.checked[index] = entry
+
+        self.queue.put(index)
+        return index
 
     security.declarePrivate("register")
     def register(self, links, referer, timestamp):
@@ -61,7 +87,11 @@ class LinkCheckTool(SimpleItem):
         database).
         """
 
-        referers = set((referer, ))
+        referers = IISet()
+
+        referer = self.index.get(referer)
+        if referer is not None:
+            referers.add(referer)
 
         registry = getUtility(IRegistry, context=self.aq_parent)
         try:
@@ -71,6 +101,10 @@ class LinkCheckTool(SimpleItem):
             return
 
         for href, paths in links:
+            paths = IISet(
+                filter(None, map(self.index.get, paths))
+                )
+
             if self.should_ignore(href, settings.ignore_list):
                 continue
 
@@ -78,25 +112,37 @@ class LinkCheckTool(SimpleItem):
             # compare the provided timestamp to our database to see if
             # we need to check its validity. Note that internal links
             # are excempt if we're not using the publisher.
-            entry = self.checked.get(href)
-            if href not in self.queue:
+            index = self.index.get(href)
+            entry = self.checked.get(-1 if index is None else index)
+
+            if index not in self.queue:
                 if entry is None or entry[0] < timestamp:
                     if settings.use_publisher or not href.startswith('/'):
-                        self.queue.put(href)
+                        index = self.enqueue(href)
+                    elif href not in self.index:
+                        index = self.store(href)
+
+            assert index is not None
 
             if entry is None:
-                entry = None, None, paths, referers
+                self.checked[index] = None, None, paths, referers
             else:
                 # If the provided paths are a subset of the already
                 # seen paths, and if there is no new referer, we don't
                 # issue an update.
-                if paths <= entry[2] and referer in entry[3]:
+                if paths <= entry[2] and referer is not None and \
+                       referer in entry[3]:
                     continue
 
-                entry = entry[0], entry[1], \
-                        entry[2] | paths, entry[3] | referers
+                entry[2].update(paths)
+                entry[3].update(referers)
 
-            self.checked[href] = entry
+    security.declarePrivate("store")
+    def store(self, url):
+        index = self.index[url] = self.counter
+        self.links[index] = url
+        self.counter += 1
+        return index
 
     security.declarePrivate("update")
     def update(self, href, status):
@@ -105,13 +151,16 @@ class LinkCheckTool(SimpleItem):
         now = datetime.datetime.now()
         timestamp = int(time.mktime(now.timetuple()))
 
-        entry = self.checked.get(href)
-        if entry is None:
-            self.checked[href] = timestamp, status, set(), set()
+        index = self.index.get(href)
+        if index is None:
             return
 
+        entry = self.checked.get(-1 if index is None else index)
+        if entry is None:
+            self.checked[index] = timestamp, status, IISet(), IISet()
+
         # If the status changed, we update the entry.
-        if status != entry[1] or not entry[0]:
+        elif status != entry[1] or not entry[0]:
 
             # If the status was previously good, then we clear the
             # status. What this means is that we'll wait for the next
@@ -119,8 +168,7 @@ class LinkCheckTool(SimpleItem):
             if entry[1] == 200:
                 status = None
 
-            self.checked[href] = timestamp, status, entry[2], entry[3]
-            return
+            self.checked[index] = timestamp, status, entry[2], entry[3]
 
     @cache(lambda method, self, ignore_list: ignore_list)
     def get_matchers(self, ignore_list):
