@@ -1,7 +1,8 @@
 Changes
 =======
 
-In next release ...
+1.1 (2012-06-25)
+----------------
 
 - Don't store path (location in document) information; it's useless
   and it takes up too much disk space.
