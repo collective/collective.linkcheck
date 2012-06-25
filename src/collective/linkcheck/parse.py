@@ -16,7 +16,6 @@ def iter_links(body):
     tree = html.getroottree()
 
     for link in html.iterfind('.//a'):
-        path = tree.getpath(link)
         href = link.attrib.get('href')
         if href is not None:
-            yield href, path
+            yield href

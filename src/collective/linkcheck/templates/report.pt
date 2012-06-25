@@ -22,23 +22,19 @@
         <a tal:attributes="href entry/url" tal:content="entry/url" />
         <dl class="collapsible collapsedOnLoad">
           <dt class="collapsibleHeader" i18n:translate="">
-            Pages:
-            <tal:paths i18n:name="referers" replace="python: len(entry['referers'])" />;
-            Locations:
-            <tal:paths i18n:name="paths" replace="python: len(entry['paths'])" />
+            <tal:referers define="count python: len(entry['referers'])"
+                          i18n:name="referers">
+              <tal:count replace="count" /><tal:plus
+              condition="python: count &gt;= context.referers"
+              >+</tal:plus>
+            </tal:referers>
+            pages
           </dt>
           <dd class="collapsibleContent">
             <span i18n:translate="">Referring pages:</span>
             <ul>
               <li tal:repeat="referer entry/referers">
-                <a tal:attributes="href referer"
-                   tal:content="referer" />
-              </li>
-            </ul>
-            <span i18n:translate="">HTML locations:</span>
-            <ul>
-              <li tal:repeat="path entry/paths">
-                <span tal:content="path" />
+                <a tal:attributes="href referer" tal:content="referer" />
               </li>
             </ul>
           </dd>

@@ -3,6 +3,11 @@ Changes
 
 In next release ...
 
+- Don't store path (location in document) information; it's useless
+  and it takes up too much disk space.
+
+- Added option to limit number of referers to store (default: 5).
+
 - Datastructure optimization.
 
   Use bucket-based data types when possible, and avoid copying strings

@@ -34,7 +34,7 @@ class LinkCheckTool(SimpleItem):
         self.queue = CompositeQueue()
 
         # This is the link database. It maps a hyperlink index to a
-        # tuple (timestamp, status, paths, referers).
+        # tuple (timestamp, status, referers).
         self.checked = IOBTree()
 
         # Indexes
@@ -72,14 +72,14 @@ class LinkCheckTool(SimpleItem):
             index = self.store(url)
         else:
             entry = self.checked.get(-1 if index is None else index)
-            entry = None, entry[1], entry[2], entry[3]
+            entry = None, entry[1], entry[2]
             self.checked[index] = entry
 
         self.queue.put(index)
         return index
 
     security.declarePrivate("register")
-    def register(self, links, referer, timestamp):
+    def register(self, hrefs, referer, timestamp):
         """Add or update link presence information.
 
         If a link has not been checked since the provided timestamp,
@@ -87,11 +87,7 @@ class LinkCheckTool(SimpleItem):
         database).
         """
 
-        referers = IISet()
-
-        referer = self.index.get(referer)
-        if referer is not None:
-            referers.add(referer)
+        referer = self.index.get(referer) or self.store(referer)
 
         registry = getUtility(IRegistry, context=self.aq_parent)
         try:
@@ -100,11 +96,9 @@ class LinkCheckTool(SimpleItem):
             logger.warn(exc)
             return
 
-        for href, paths in links:
-            paths = IISet(
-                filter(None, map(self.index.get, paths))
-                )
+        limit = settings.referers
 
+        for href in hrefs:
             if self.should_ignore(href, settings.ignore_list):
                 continue
 
@@ -125,17 +119,14 @@ class LinkCheckTool(SimpleItem):
             assert index is not None
 
             if entry is None:
-                self.checked[index] = None, None, paths, referers
+                self.checked[index] = None, None, IISet((referer,))
             else:
                 # If the provided paths are a subset of the already
                 # seen paths, and if there is no new referer, we don't
                 # issue an update.
-                if paths <= entry[2] and referer is not None and \
-                       referer in entry[3]:
-                    continue
-
-                entry[2].update(paths)
-                entry[3].update(referers)
+                referers = entry[2]
+                if referer not in referers and len(referers) <= limit:
+                    referers.add(referer)
 
     security.declarePrivate("store")
     def store(self, url):
@@ -157,7 +148,7 @@ class LinkCheckTool(SimpleItem):
 
         entry = self.checked.get(-1 if index is None else index)
         if entry is None:
-            self.checked[index] = timestamp, status, IISet(), IISet()
+            self.checked[index] = timestamp, status, IISet()
 
         # If the status changed, we update the entry.
         elif status != entry[1] or not entry[0]:
@@ -168,7 +159,7 @@ class LinkCheckTool(SimpleItem):
             if entry[1] == 200:
                 status = None
 
-            self.checked[index] = timestamp, status, entry[2], entry[3]
+            self.checked[index] = timestamp, status, entry[2]
 
     @cache(lambda method, self, ignore_list: ignore_list)
     def get_matchers(self, ignore_list):

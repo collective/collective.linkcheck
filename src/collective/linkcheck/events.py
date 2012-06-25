@@ -88,8 +88,8 @@ def end_request(event):
 
     base_url = site.absolute_url()
 
-    hrefs = {}
-    for href, path in iter_links(document):
+    hrefs = set()
+    for href in iter_links(document):
         # Ignore anchors and javascript.
         if href.startswith('#') or href.startswith('javascript:'):
             continue
@@ -103,7 +103,7 @@ def end_request(event):
             if href.count('/') == 2:
                 href = href.rstrip('/') + '/'
 
-        hrefs.setdefault(href, set()).add(path)
+        hrefs.add(href)
 
     # We want all the hyperlinks in the document to be checked unless
     # it's already in the queue or it has been checked recently.
@@ -116,7 +116,7 @@ def end_request(event):
               '://' + event.request['HTTP_HOST'] + event.request['PATH_INFO']
 
     # Update link database
-    tool.register(hrefs.items(), referer, yesterday)
+    tool.register(hrefs, referer, yesterday)
 
     # We always commit the transaction; if no changes were made, this
     # is a NOOP. Note that conflict errors are possible with

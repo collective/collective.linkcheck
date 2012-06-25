@@ -54,6 +54,14 @@ class ISettings(Interface):
         default=False,
         )
 
+    referers = schema.Int(
+        title=_(u'Referer limit'),
+        description=_(u"The database will store up to this number "
+                      u"of referring links for each entry."),
+        required=False,
+        default=5,
+        )
+
     ignore_list = schema.Tuple(
         title=_(u'Ignore list'),
         description=_(u'Use regular expressions to prevent links '

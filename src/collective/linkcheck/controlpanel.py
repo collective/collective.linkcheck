@@ -156,6 +156,8 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             reverse=True,
             )
 
+        settings = self.getContent()
+
         for i, entry in entries:
             status = entry[1]
 
@@ -174,14 +176,16 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             url = self.tool.links[i]
             age = timestamp - (entry[0] or timestamp)
 
+            referers = filter(None, map(self.tool.links.get, entry[2]))\
+                       [:settings.referers]
+
             rows.append({
                 'url': url,
                 'quoted_url': urllib.quote_plus(url),
                 'age': age,
                 'date': datetime.datetime.fromtimestamp(entry[0] or timestamp),
                 'status': "%d %s" % (status, status_reasons.get(status, '')),
-                'paths': entry[2],
-                'referers': entry[3],
+                'referers': referers,
                 'queued': url in self.tool.queue,
                 })
 

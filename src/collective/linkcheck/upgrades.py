@@ -1,6 +1,11 @@
 from Products.CMFCore.utils import getToolByName
 from BTrees.IIBTree import IISet
 
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
+
+from .interfaces import ISettings
+
 
 def upgrade_tool(tool):
     site = tool.aq_parent
@@ -22,7 +27,7 @@ def upgrade_tool(tool):
 
     for i, href in enumerate(checked):
         entry = checked[href]
-        tool.checked[i] = entry[0], entry[1], t(entry[2]), t(entry[3])
+        tool.checked[i] = entry[0], entry[1], t(entry[3])
         tool.index[href] = i
         tool.links[i] = href
 
@@ -31,3 +36,6 @@ def upgrade_tool(tool):
     # Migrate queue.
     for href in queue:
         tool.enqueue(href)
+
+    registry = getUtility(IRegistry)
+    registry.registerInterface(ISettings)
