@@ -20,8 +20,6 @@ class CompositeQueue(CompositeQueue):
     def __getitem__(self, index):
         """Optimize frequently accessed index."""
 
-        return super(CompositeQueue, self).__getitem__(index)
-
         if index == -1:
             queue = index
             while not len(self._data[queue]):

@@ -1,6 +1,11 @@
 Changes
 =======
 
+In next release ...
+
+- Fixed issue where the composite queue implementation would be used
+  incorrectly.
+
 1.1 (2012-06-25)
 ----------------
 
