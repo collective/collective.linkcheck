@@ -94,6 +94,7 @@ def run(app, args):
             tasks.append((tool, settings, q, responses))
 
     if not tasks:
+        logger.info("no sites found; exiting ...")
         return
 
     # Enter runloop
