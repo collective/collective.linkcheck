@@ -3,6 +3,8 @@ Changes
 
 In next release ...
 
+- Always enter run loop and routinely poll for new sites.
+
 - Fixed issue where the composite queue implementation would be used
   incorrectly.
 
