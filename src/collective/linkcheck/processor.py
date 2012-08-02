@@ -32,7 +32,7 @@ def partition(pred, iterable):
     return ifilter(pred, t1), ifilterfalse(pred, t2)
 
 
-def run(app, args):
+def run(app, args, rate=5):
     # Adjust root logging handler levels
     level = getConfiguration().eventlog.getLowestHandlerLevel()
     root = logging.getLogger()
@@ -45,64 +45,72 @@ def run(app, args):
 
     session = requests.Session(timeout=5)
 
-    tasks = []
-    for name, item in app.objectItems():
-        if IPloneSiteRoot.providedBy(item):
-            try:
-                tool = getToolByName(item, 'portal_linkcheck')
-            except AttributeError:
-                continue
-
-            logger.info("found site '%s'." % name)
-
-            registry = getUtility(IRegistry, context=item)
-
-            try:
-                settings = registry.forInterface(ISettings)
-            except KeyError:
-                logger.warn("settings not available; please reinstall.")
-                continue
-
-            responses = []
-
-            def worker():
-                while True:
-                    url = q.get()
-
-                    try:
-                        r = session.get(url)
-                    except requests.Timeout:
-                        r = requests.Response()
-                        r.status_code = 504
-                        r.url = url
-                    except requests.RequestException as exc:
-                        logger.warn(exc)
-                        r = requests.Response()
-                        r.status_code = 503
-                        r.url = url
-
-                    responses.append(r)
-                    q.task_done()
-
-            q = Queue()
-            for i in range(settings.concurrency):
-                t = threading.Thread(target=worker)
-                t.daemon = True
-                t.start()
-
-            logger.info("%d worker threads started." % settings.concurrency)
-            tasks.append((tool, settings, q, responses))
-
-    if not tasks:
-        logger.info("no sites found; exiting ...")
-        return
+    counter = 0
+    sites = {}
 
     # Enter runloop
-    counter = 0
     while True:
         errors = set()
 
-        for tool, settings, queue, responses in tasks:
+        for name, item in app.objectItems():
+            if name in sites:
+                continue
+
+            if IPloneSiteRoot.providedBy(item):
+                try:
+                    tool = getToolByName(item, 'portal_linkcheck')
+                except AttributeError:
+                    continue
+
+                logger.info("found site '%s'." % name)
+
+                registry = getUtility(IRegistry, context=item)
+
+                try:
+                    settings = registry.forInterface(ISettings)
+                except KeyError:
+                    logger.warn("settings not available; please reinstall.")
+                    continue
+
+                responses = []
+
+                def worker():
+                    while True:
+                        url = q.get()
+
+                        try:
+                            r = session.get(url)
+                        except requests.Timeout:
+                            r = requests.Response()
+                            r.status_code = 504
+                            r.url = url
+                        except requests.RequestException as exc:
+                            logger.warn(exc)
+                            r = requests.Response()
+                            r.status_code = 503
+                            r.url = url
+
+                        responses.append(r)
+                        q.task_done()
+
+                q = Queue()
+                for i in range(settings.concurrency):
+                    t = threading.Thread(target=worker)
+                    t.daemon = True
+                    t.start()
+
+                logger.info(
+                    "%d worker threads started." % settings.concurrency
+                    )
+
+                sites[name] = (tool, settings, q, responses)
+
+        if not sites and not counter:
+            logger.info(
+                "no sites found; polling every %d second(s) ..." % rate
+                )
+
+        for tool, settings, queue, responses in sites.values():
             # Synchronize database
             tool._p_jar.sync()
 
@@ -266,5 +274,5 @@ def run(app, args):
         for url in errors:
             logger.warn("error checking: %s." % url)
 
-        time.sleep(1)
+        time.sleep(rate)
         counter += 1
