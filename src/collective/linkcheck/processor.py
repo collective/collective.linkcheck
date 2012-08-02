@@ -275,4 +275,5 @@ def run(app, args, rate=5):
             logger.warn("error checking: %s." % url)
 
         time.sleep(rate)
+        app._p_jar.sync()
         counter += 1
