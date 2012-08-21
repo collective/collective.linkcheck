@@ -3,6 +3,9 @@ Changes
 
 In next release ...
 
+- Resolve links with parent pointers ("../") to avoid duplicate
+  indexing.
+
 - Always enter run loop and routinely poll for new sites.
 
 - Fixed issue where the composite queue implementation would be used
