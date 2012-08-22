@@ -3,6 +3,8 @@ Changes
 
 In next release ...
 
+- Discard anchor (#) and query string (?) URL components.
+
 - Resolve links with parent pointers ("../") to avoid duplicate
   indexing.
 

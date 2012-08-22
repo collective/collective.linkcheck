@@ -48,5 +48,8 @@ def iter_links(body):
             else:
                 href = href[:previous] + "/" + after
 
+        href = href.split('#', 1)[0]
+        href = href.split('?', 1)[0]
+
         if href:
             yield href
