@@ -20,6 +20,9 @@ def iter_links(body):
         base = None
         href = link.attrib.get('href')
 
+        if not href:
+            continue
+
         while '../' in href:
             if '://' not in href:
                 if base is None:
