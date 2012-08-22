@@ -20,7 +20,11 @@ class StatsViewlet(ViewletBase):
 
     @property
     def average_entropy(self):
-        timestamps = set(entry[0] for entry in self.tool.checked.values())
+        timestamps = set(
+            entry[0] for entry in self.tool.checked.values()
+            if entry[1] is not None
+            )
+
         if not timestamps:
             return 0
 
