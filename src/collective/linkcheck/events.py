@@ -57,7 +57,14 @@ def end_request(event):
         logger.warn("Tool not available; please run update step.")
         return
 
-    tool.update(event.request['PATH_INFO'], status)
+    # Compute path given the actual URL, relative to the site root.
+    base_url = site.absolute_url()
+    actual_url = event.request.get('ACTUAL_URL', '')
+    if not actual_url.startswith(base_url):
+        return
+
+    path = actual_url[len(base_url):]
+    tool.update(path, status)
 
     # Must be good response.
     if status != 200:
@@ -85,8 +92,6 @@ def end_request(event):
     except UnicodeDecodeError as exc:
         logger.warn(exc)
         return
-
-    base_url = site.absolute_url()
 
     hrefs = set()
     for href in iter_links(document):
