@@ -34,7 +34,7 @@ def iter_links(body):
                         base = base.rstrip('/') + '/'
 
                 if base:
-                    href = base + href
+                    href = base + href.lstrip('/')
                     href = '/' + href.split('://', 1)[1].split('/', 1)[-1]
 
             i = href.find('../')
