@@ -76,6 +76,10 @@ class ReportWidget(widget.Widget):
     def data(self):
         return self.form.__parent__.list_entries(self.count)
 
+    @property
+    def updated(self):
+        return self.form.__parent__.get_modified_date()
+
 
 class ReportGroup(group.Group):
     label = _(u"Report")
@@ -141,6 +145,13 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         sha.update(secret)
         sha.update("RSS")
         return sha.hexdigest()
+
+    def get_modified_date(self):
+        return datetime.date.fromtimestamp(min(
+            self.tool.index._p_mtime,
+            self.tool.links._p_mtime,
+            self.tool.checked._p_mtime,
+            ))
 
     def list_entries(self, count=100):
         rows = []
