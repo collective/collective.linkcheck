@@ -77,17 +77,23 @@ def run(app, args, rate=5):
                 def worker():
                     while True:
                         url = q.get()
+                        r = None
 
                         try:
                             r = session.get(url)
                         except requests.Timeout:
-                            r = requests.Response()
-                            r.status_code = 504
-                            r.url = url
+                            status_code = 504
                         except requests.RequestException as exc:
                             logger.warn(exc)
+                            status_code = 503
+                        except UnicodeError as exc:
+                            logger.warn("Unable to decode string: %r (%s)." % (
+                                url, exc))
+                            status_code = 502
+
+                        if r is None:
                             r = requests.Response()
-                            r.status_code = 503
+                            r.status_code = status_code
                             r.url = url
 
                         responses.append(r)
