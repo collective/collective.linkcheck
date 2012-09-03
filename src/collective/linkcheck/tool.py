@@ -62,6 +62,7 @@ class LinkCheckTool(SimpleItem):
 
         self.checked.clear()
         self.index.clear()
+        self.links.clear()
         self.counter = 0
 
     security.declarePrivate("enqueue")

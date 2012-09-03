@@ -192,7 +192,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         return rows
 
     @button.buttonAndHandler(_(u"Clear"), name='clear')
-    def handleSchedule(self, action):
+    def handleClear(self, action):
         data, errors = self.extractData()
         if errors:
             self.status = self.formErrorsMessage
