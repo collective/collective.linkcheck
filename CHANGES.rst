@@ -3,6 +3,9 @@ Changes
 
 In next release ...
 
+- Fixed an issue where URLs containing unquotable characters would
+  cause the controlpanel to break.
+
 - Discard anchor (#) and query string (?) URL components.
 
 - Resolve links with parent pointers ("../") to avoid duplicate

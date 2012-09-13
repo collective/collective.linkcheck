@@ -187,12 +187,17 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             url = self.tool.links[i]
             age = timestamp - (entry[0] or timestamp)
 
-            referers = filter(None, map(self.tool.links.get, entry[2]))\
+            referers = filter(None, map(self.tool.links.get, entry[2])) \
                        [:settings.referers]
+
+            try:
+                quoted_url = urllib.quote_plus(url)
+            except KeyError:
+                quote_plus = None
 
             rows.append({
                 'url': url,
-                'quoted_url': urllib.quote_plus(url),
+                'quoted_url': quoted_url,
                 'age': age,
                 'date': datetime.datetime.fromtimestamp(entry[0] or timestamp),
                 'status': "%d %s" % (status, status_reasons.get(status, '')),
