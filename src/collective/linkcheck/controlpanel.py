@@ -193,7 +193,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             try:
                 quoted_url = urllib.quote_plus(url)
             except KeyError:
-                quote_plus = None
+                quote_url = None
 
             rows.append({
                 'url': url,
