@@ -1,7 +1,8 @@
 Changes
 =======
 
-In next release ...
+1.2 (2012-11-22)
+----------------
 
 - Fixed an issue where URLs containing unquotable characters would
   cause the controlpanel to break.
