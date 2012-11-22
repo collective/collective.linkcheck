@@ -1,4 +1,3 @@
-import os
 import logging
 
 import lxml.html
@@ -10,11 +9,9 @@ logger = logging.getLogger("linkcheck.parse")
 def iter_links(body):
     try:
         html = lxml.html.fromstring(body)
-    except lxml.etree.ParserError as exc:
+    except (lxml.etree.ParseError, lxml.etree.ParserError) as exc:
         logger.warn(exc)
         return
-
-    tree = html.getroottree()
 
     for link in html.iterfind('.//a'):
         base = None
