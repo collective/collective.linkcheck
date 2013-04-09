@@ -41,7 +41,7 @@ setup(name='collective.linkcheck',
       install_requires=[
           'setuptools',
           'zc.queue >= 1.3',
-          'requests',
+          'requests < 1.0.0',
           'plone.z3cform',
       ],
       entry_points="""
