@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.3 (unreleased)
+----------------
+
+- added german translations [petschki]
+- added https://raw.github.com/github/gitignore/master/Plone.gitignore
+  [petschki]
+
 1.2 (2012-11-22)
 ----------------
 

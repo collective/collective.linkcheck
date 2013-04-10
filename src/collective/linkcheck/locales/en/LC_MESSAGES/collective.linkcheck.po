@@ -1,0 +1,186 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2013-04-09 12:44+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: DOMAIN\n"
+
+#: collective/linkcheck/templates/report.pt:68
+msgid "${age} days"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:62
+msgid "${age} hours"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:56
+msgid "${age} minutes"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:53
+msgid "${age} seconds"
+msgstr ""
+
+#: collective/linkcheck/templates/stats.pt:12
+msgid "${count} updates per transaction."
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:31
+msgid "${referers} pages"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:64
+msgid "A day"
+msgstr ""
+
+#: collective/linkcheck/templates/stats.pt:4
+msgid "Active links"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:21
+msgid "Age"
+msgstr ""
+
+#: collective/linkcheck/controlpanel.py:222
+msgid "All data cleared."
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:58
+msgid "An hour"
+msgstr ""
+
+#: collective/linkcheck/templates/stats.pt:10
+msgid "Average entropy"
+msgstr ""
+
+#: collective/linkcheck/controlpanel.py:210
+msgid "Clear"
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:17
+msgid "Concurrency"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:75
+msgid "Enqueue"
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:32
+msgid "Expiration"
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:66
+msgid "Ignore list"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:78
+#: collective/linkcheck/templates/stats.pt:7
+msgid "In queue"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:4
+msgid "Last updated ${date}."
+msgstr ""
+
+#: collective/linkcheck/controlpanel.py:117
+#: collective/linkcheck/profiles/default/controlpanel.xml
+msgid "Link validity"
+msgstr ""
+
+#: collective/linkcheck/controlpanel.py:90
+msgid "Problems"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:8
+msgid "RSS-feed available. Click the orange icon."
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:58
+msgid "Referer limit"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:40
+msgid "Referring pages:"
+msgstr ""
+
+#: collective/linkcheck/controlpanel.py:85
+msgid "Report"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:22
+msgid "Retry"
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:50
+msgid "Select this option to publish internal links that have not been requested, and thus have no recorded response status."
+msgstr ""
+
+#: collective/linkcheck/controlpanel.py:108
+msgid "Settings"
+msgstr ""
+
+#: collective/linkcheck/templates/stats.pt:2
+msgid "Statistics"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:20
+msgid "Status"
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:59
+msgid "The database will store up to this number of referring links for each entry."
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:25
+msgid "The minimum number of hours between checking the same link to update its link validity status."
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:42
+msgid "The number of items pulled out of the worker queue for every transaction."
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:33
+msgid "This decides the link expiration threshold. Enter the number of days that a link should be valid after an appearance in the page output."
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:18
+msgid "This decides the number of simultaneous downloads."
+msgstr ""
+
+#: collective/linkcheck/controlpanel.py:91
+msgid "This table lists the top ${count} URLs with a bad status. To retry a URL immediately, select "Enqueue". Each entry expands to display the pages that the link appeared on and the location in the HTML markup."
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:41
+msgid "Transaction size"
+msgstr ""
+
+#: collective/linkcheck/templates/report.pt:19
+msgid "URL"
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:24
+msgid "Update interval"
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:49
+msgid "Use publisher"
+msgstr ""
+
+#: collective/linkcheck/interfaces.py:67
+msgid "Use regular expressions to prevent links from appearing in the list. One expression per line (e.g. "^http://bit.ly")."
+msgstr ""
+
+#: collective/linkcheck/controlpanel.py:118
+msgid "View report and configure operation."
+msgstr ""
+

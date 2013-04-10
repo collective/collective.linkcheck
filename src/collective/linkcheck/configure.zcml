@@ -27,6 +27,8 @@
       handler=".upgrades.upgrade_tool"
       />
 
+  <i18n:registerTranslations directory="locales" />
+
   <!-- Lifecycle events -->
 
   <subscriber
