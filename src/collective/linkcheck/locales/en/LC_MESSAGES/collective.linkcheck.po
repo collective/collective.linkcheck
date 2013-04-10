@@ -157,7 +157,7 @@ msgid "This decides the number of simultaneous downloads."
 msgstr ""
 
 #: collective/linkcheck/controlpanel.py:91
-msgid "This table lists the top ${count} URLs with a bad status. To retry a URL immediately, select "Enqueue". Each entry expands to display the pages that the link appeared on and the location in the HTML markup."
+msgid "This table lists the top ${count} URLs with a bad status. To retry a URL immediately, select \"Enqueue\". Each entry expands to display the pages that the link appeared on and the location in the HTML markup."
 msgstr ""
 
 #: collective/linkcheck/interfaces.py:41
@@ -177,7 +177,7 @@ msgid "Use publisher"
 msgstr ""
 
 #: collective/linkcheck/interfaces.py:67
-msgid "Use regular expressions to prevent links from appearing in the list. One expression per line (e.g. "^http://bit.ly")."
+msgid "Use regular expressions to prevent links from appearing in the list. One expression per line (e.g. \"^http://bit.ly\")."
 msgstr ""
 
 #: collective/linkcheck/controlpanel.py:118
