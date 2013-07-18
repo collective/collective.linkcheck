@@ -13,6 +13,14 @@ class ILinkCheckTool(Interface):
 
 
 class ISettings(Interface):
+
+    report_urls_count = schema.Int(
+        title=_(u'Report Urls count'),
+        description=_(u'The number of Urls to show in the report view.'),
+        required=True,
+        default=20,
+        )
+
     concurrency = schema.Int(
         title=_(u'Concurrency'),
         description=_(u'This decides the number of simultaneous downloads.'),

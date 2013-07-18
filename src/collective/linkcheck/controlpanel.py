@@ -18,6 +18,7 @@ from plone.z3cform import layout
 from plone.app.registry.browser import controlpanel
 from plone.keyring.interfaces import IKeyManager
 from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
 
 from collective.linkcheck.interfaces import ISettings
 from collective.linkcheck import MessageFactory as _
@@ -52,7 +53,15 @@ def triage(status):
 class ReportWidget(widget.Widget):
     render = ViewPageTemplateFile("templates/report.pt")
 
-    count = 20
+    @property
+    def count(self):
+        registry = getUtility(IRegistry, context=self.form.context)
+        try:
+            settings = registry.forInterface(ISettings)
+            return settings.report_urls_count
+        except KeyError:
+            logger.warn("settings not available; please reinstall.")
+            return 20
 
     @classmethod
     def factory(cls, field, request):
@@ -89,12 +98,11 @@ class ReportGroup(group.Group):
                 __name__="table",
                 title=_(u"Problems"),
                 description=_(
-                    u"This table lists the top ${count} URLs with a "
+                    u"This table lists the top URLs with a "
                     u"bad status. To retry a URL immediately, select "
                     u"\"Enqueue\". Each entry expands to display the "
                     u"pages that the link appeared on and the location in "
-                    u"the HTML markup.",
-                    mapping={'count': ReportWidget.count},
+                    u"the HTML markup."
                     ),
                 required=False
                 ),
