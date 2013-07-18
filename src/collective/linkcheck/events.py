@@ -116,12 +116,11 @@ def end_request(event):
     date = now - datetime.timedelta(days=1)
     yesterday = int(time.mktime(date.timetuple()))
 
-    # Determine referer URL
-    referer = event.request['SERVER_PROTOCOL'].split('/', 1)[0].lower() + \
-              '://' + event.request['HTTP_HOST'] + event.request['PATH_INFO']
+    #referer is nothing else than the actual_url. HTTP_HOST and PATH_INFO
+    # give wrong URLs in VirtualHosting
 
     # Update link database
-    tool.register(hrefs, referer, yesterday)
+    tool.register(hrefs, actual_url, yesterday)
 
     # We always commit the transaction; if no changes were made, this
     # is a NOOP. Note that conflict errors are possible with
