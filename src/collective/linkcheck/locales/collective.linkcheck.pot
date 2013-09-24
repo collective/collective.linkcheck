@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-04-09 12:44+0000\n"
+"POT-Creation-Date: 2013-09-24 08:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Age"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:222
+#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:230
 msgid "All data cleared."
 msgstr ""
 
@@ -65,11 +65,11 @@ msgstr ""
 msgid "Average entropy"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:210
+#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:218
 msgid "Clear"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:17
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:25
 msgid "Concurrency"
 msgstr ""
 
@@ -77,11 +77,11 @@ msgstr ""
 msgid "Enqueue"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:32
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:40
 msgid "Expiration"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:66
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:74
 msgid "Ignore list"
 msgstr ""
 
@@ -94,12 +94,12 @@ msgstr ""
 msgid "Last updated ${date}."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:117
+#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:125
 #: collective.linkcheck/src/collective/linkcheck/profiles/default/controlpanel.xml
 msgid "Link validity"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:90
+#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:99
 msgid "Problems"
 msgstr ""
 
@@ -107,7 +107,7 @@ msgstr ""
 msgid "RSS-feed available. Click the orange icon."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:58
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:66
 msgid "Referer limit"
 msgstr ""
 
@@ -115,19 +115,23 @@ msgstr ""
 msgid "Referring pages:"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:85
+#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:94
 msgid "Report"
+msgstr ""
+
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:18
+msgid "Report Urls count"
 msgstr ""
 
 #: collective.linkcheck/src/collective/linkcheck/templates/report.pt:22
 msgid "Retry"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:50
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:58
 msgid "Select this option to publish internal links that have not been requested, and thus have no recorded response status."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:108
+#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:116
 msgid "Settings"
 msgstr ""
 
@@ -139,31 +143,35 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:59
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:67
 msgid "The database will store up to this number of referring links for each entry."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:25
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:33
 msgid "The minimum number of hours between checking the same link to update its link validity status."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:42
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:19
+msgid "The number of Urls to show in the report view."
+msgstr ""
+
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:50
 msgid "The number of items pulled out of the worker queue for every transaction."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:33
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:41
 msgid "This decides the link expiration threshold. Enter the number of days that a link should be valid after an appearance in the page output."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:18
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:26
 msgid "This decides the number of simultaneous downloads."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:91
-msgid "This table lists the top ${count} URLs with a bad status. To retry a URL immediately, select "Enqueue". Each entry expands to display the pages that the link appeared on and the location in the HTML markup."
+#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:100
+msgid "This table lists the top URLs with a bad status. To retry a URL immediately, select \"Enqueue\". Each entry expands to display the pages that the link appeared on and the location in the HTML markup."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:41
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:49
 msgid "Transaction size"
 msgstr ""
 
@@ -171,19 +179,19 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:24
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:32
 msgid "Update interval"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:49
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:57
 msgid "Use publisher"
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/interfaces.py:67
-msgid "Use regular expressions to prevent links from appearing in the list. One expression per line (e.g. "^http://bit.ly")."
+#: collective.linkcheck/src/collective/linkcheck/interfaces.py:75
+msgid "Use regular expressions to prevent links from appearing in the list. One expression per line (e.g. \"^http://bit.ly\")."
 msgstr ""
 
-#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:118
+#: collective.linkcheck/src/collective/linkcheck/controlpanel.py:126
 msgid "View report and configure operation."
 msgstr ""
 

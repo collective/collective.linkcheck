@@ -32,9 +32,9 @@
 
   <item tal:repeat="entry rows"
         rdf:about="" tal:attributes="rdf:about entry/url">
-    <title tal:content="entry/status" />
-    <link tal:content="entry/url" />
-    <dc:date tal:content="python: entry['date'].isoformat()" />
+    <title tal:content="entry/status">title</title>
+    <link tal:content="entry/url">url</link>
+    <dc:date tal:content="python: entry['date'].isoformat()">1.1.2013</dc:date>
   </item>
 
 </rdf:RDF>

@@ -4,8 +4,11 @@ Changes
 1.3 (unreleased)
 ----------------
 
-- added german translations [petschki]
+- added german translations
+  [petschki]
 - added https://raw.github.com/github/gitignore/master/Plone.gitignore
+  [petschki]
+- add upgrade step for new registry entry
   [petschki]
 
 1.2 (2012-11-22)

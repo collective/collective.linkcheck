@@ -27,6 +27,15 @@
       handler=".upgrades.upgrade_tool"
       />
 
+  <genericsetup:upgradeStep
+      source="1.1"
+      destination="1300"
+      profile="collective.linkcheck:default"
+      title="Migrate from 1.1 to 1300"
+      description="Updates Registry entry."
+      handler=".upgrades.update_registry"
+      />
+
   <i18n:registerTranslations directory="locales" />
 
   <!-- Lifecycle events -->
