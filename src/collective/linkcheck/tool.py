@@ -136,6 +136,12 @@ class LinkCheckTool(SimpleItem):
         self.counter += 1
         return index
 
+    security.declarePrivate("remove")
+    def remove(self, url):
+        index = self.index.get(url)
+        del self.index[url]
+        del self.checked[index]
+
     security.declarePrivate("update")
     def update(self, href, status):
         """Update link status."""

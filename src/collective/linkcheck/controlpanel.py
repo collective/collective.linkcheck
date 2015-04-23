@@ -69,7 +69,7 @@ class ReportWidget(widget.Widget):
 
     @property
     @memoize
-    def enqueue_url(self):
+    def action_url(self):
         return self.request.getURL()
 
     @property
@@ -140,6 +140,14 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         if url is not None:
             url = urllib.unquote_plus(url)
             self.tool.enqueue(url)
+            transaction.commit()
+            location = self.request.getURL()
+            raise Redirect(location)
+
+        url = self.request.get('remove')
+        if url is not None:
+            url = urllib.unquote_plus(url)
+            self.tool.remove(url)
             transaction.commit()
             location = self.request.getURL()
             raise Redirect(location)
