@@ -12,13 +12,113 @@ from Queue import Queue
 from App.config import getConfiguration
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFCore.utils import getToolByName
-from ZPublisher.Test import publish_module
 from ZODB.POSException import ConflictError
 
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 
 from .interfaces import ISettings
+import sys
+import os
+
+#from ZPublisher.Test import publish_module
+
+
+def publish_module(module_name,
+                   stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr,
+                   environ=os.environ, debug=0, request=None, response=None,
+                   extra={}):
+    """ Adapted from from ZPublisher.Test.publish_module:
+    but we handle the response status like given from response.getStatus(),
+    otherwise plone internal links will return status=200 for status=404 links,
+    which will not throw an error.
+    """
+    must_die = 0
+    status = 200
+    after_list = [None]
+    from ZPublisher.Response import Response
+    from ZPublisher.Request import Request
+    from ZPublisher.Publish import publish
+    from zope.publisher.interfaces import ISkinnable
+    from zope.publisher.skinnable import setDefaultSkin
+    try:
+        try:
+            if response is None:
+                response = Response(stdout=stdout, stderr=stderr)
+            else:
+                stdout = response.stdout
+
+            # debug is just used by tests (has nothing to do with debug_mode!)
+            response.handle_errors = not debug
+
+            if request is None:
+                request = Request(stdin, environ, response)
+
+            # make sure that the request we hand over has the
+            # default layer/skin set on it; subsequent code that
+            # wants to look up views will likely depend on it
+            if ISkinnable.providedBy(request):
+                setDefaultSkin(request)
+
+            for k, v in extra.items():
+                request[k] = v
+            response = publish(request, module_name, after_list, debug=debug)
+        except (SystemExit, ImportError):
+            # XXX: Rendered ImportErrors were never caught here because they
+            # were re-raised as string exceptions. Maybe we should handle
+            # ImportErrors like all other exceptions. Currently they are not
+            # re-raised at all, so they don't show up here.
+            must_die = sys.exc_info()
+            request.response.exception(1)
+        except:
+            # debug is just used by tests (has nothing to do with debug_mode!)
+            if debug:
+                raise
+            request.response.exception()
+            status = response.getStatus()
+
+        if response:
+            ## this is our change: otherwise 404 will return 200
+            ## but we only want "real" 404 - otherwise the list will get full
+            ## of internal links with edit-links stuff that will return 5xx
+            ## codes.
+            if response.getStatus() == 404:
+                status = response.getStatus()
+
+            outputBody = getattr(response, 'outputBody', None)
+            if outputBody is not None:
+                outputBody()
+            else:
+                response = str(response)
+                if response:
+                    stdout.write(response)
+
+        # The module defined a post-access function, call it
+        if after_list[0] is not None:
+            after_list[0]()
+
+    finally:
+        if request is not None:
+            request.close()
+
+    if must_die:
+        # Try to turn exception value into an exit code.
+        try:
+            if hasattr(must_die[1], 'code'):
+                code = must_die[1].code
+            else:
+                code = int(must_die[1])
+        except:
+            code = must_die[1] and 1 or 0
+        if hasattr(request.response, '_requestShutdown'):
+            request.response._requestShutdown(code)
+
+        try:
+            raise must_die[0], must_die[1], must_die[2]
+        finally:
+            must_die = None
+
+    return status
 
 
 def partition(pred, iterable):
@@ -40,7 +140,7 @@ def run(app, args, rate=5):
         handler.setLevel(level)
 
     logger = logging.getLogger("linkcheck.processor")
-    logger.setLevel(level)
+    #logger.setLevel(level)
     logger.info("looking for sites...")
 
     session = requests.Session(timeout=5)
@@ -204,6 +304,7 @@ def run(app, args, rate=5):
                 updates.append((url, status))
 
             for url in internal:
+
                 # For now, we simply ignore internal links if we're
                 # not publishing.
                 if not settings.use_publisher:
@@ -238,6 +339,11 @@ def run(app, args, rate=5):
                     if status == 302:
                         status = 200
 
+                print url, status
+                if status != 200:
+                    print "*"*76
+                    print "Error: %s -> %s" % (env['PATH_INFO'], status)
+
                 updates.append((url, status))
 
             # Pull URLs out of queue, actually removing them.
@@ -255,6 +361,7 @@ def run(app, args, rate=5):
                     url = tool.links[i]
                     urls.remove(url)
                 except KeyError:
+                    print "appending unchanged: %s" % (i)
                     unchanged.append(i)
 
             # This shouldn't happen to frequently.
@@ -269,6 +376,7 @@ def run(app, args, rate=5):
 
             # Apply status updates
             for url, status in updates:
+                print "updating: %s with %s" % (url, status)
                 tool.update(url, status)
 
             transaction.get().note('updated link validity')
