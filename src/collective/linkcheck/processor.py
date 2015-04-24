@@ -13,6 +13,7 @@ from App.config import getConfiguration
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFCore.utils import getToolByName
 from ZODB.POSException import ConflictError
+from zExceptions import Unauthorized
 
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
@@ -70,6 +71,11 @@ def publish_module(module_name,
             # re-raised at all, so they don't show up here.
             must_die = sys.exc_info()
             request.response.exception(1)
+        except Unauthorized:
+            # Handle Unauthorized separately, otherwise it will be displayed as
+            # a redirect to the login form
+            status = 200
+            response = None
         except:
             # debug is just used by tests (has nothing to do with debug_mode!)
             if debug:
@@ -82,7 +88,7 @@ def publish_module(module_name,
             ## but we only want "real" 404 - otherwise the list will get full
             ## of internal links with edit-links stuff that will return 5xx
             ## codes.
-            if response.getStatus() == 404:
+            if response.getStatus() in (301, 302, 404):
                 status = response.getStatus()
 
             outputBody = getattr(response, 'outputBody', None)
@@ -118,7 +124,7 @@ def publish_module(module_name,
         finally:
             must_die = None
 
-    return status
+    return status, response
 
 
 def partition(pred, iterable):
@@ -150,6 +156,7 @@ def run(app, args, rate=5):
 
     # Enter runloop
     while True:
+        to_enqueue = []
         errors = set()
 
         for name, item in app.objectItems():
@@ -329,14 +336,26 @@ def run(app, args, rate=5):
                 env['PATH_INFO'] = "/" + tool.aq_parent.absolute_url() + url
 
                 try:
-                    status = publish_module(
+                    status, response = publish_module(
                         'Zope2', environ=env, stdout=stdout, stderr=stderr
                         )
                 except ConflictError:
                     status = 503
                 else:
-                    # This is assumed to be a good response.
-                    if status == 302:
+                    if status in (301, 302):
+                        #enqueue the redirect target
+                        target = response.headers.get('location')
+                        # for internal redirects host will be the one from env,
+                        # remove it
+                        prefix = 'http://%s' % env['HTTP_HOST']
+                        if target.startswith(prefix):
+                            target = target.replace(prefix, '', 1)
+                        now = datetime.datetime.now()
+                        date = now - datetime.timedelta(days=1)
+                        yesterday = int(time.mktime(date.timetuple()))
+                        to_enqueue.append(([target], env['PATH_INFO'],
+                                           yesterday))
+
                         status = 200
 
                 print url, status
@@ -378,6 +397,9 @@ def run(app, args, rate=5):
             for url, status in updates:
                 print "updating: %s with %s" % (url, status)
                 tool.update(url, status)
+
+            for arguments in to_enqueue:
+                tool.register(*arguments)
 
             transaction.get().note('updated link validity')
             try:
