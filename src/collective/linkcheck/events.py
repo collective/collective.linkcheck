@@ -99,6 +99,12 @@ def end_request(event):
         if href.startswith('#') or href.startswith('javascript:'):
             continue
 
+        # handle relative urls
+        if href.startswith('.') or (
+                not href.startswith('/') and
+                '://' not in href):
+            href = '/'.join((actual_url, href))
+
         # Internal URLs are stored site-relative.
         if href.startswith(base_url):
             href = "/" + href[len(base_url) + 1:].rstrip("/")
