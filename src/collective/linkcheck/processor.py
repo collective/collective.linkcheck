@@ -19,6 +19,8 @@ from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 
 from .interfaces import ISettings
+from .parse import iter_links
+
 import sys
 import os
 
@@ -343,18 +345,30 @@ def run(app, args, rate=5):
                     status = 503
                 else:
                     if status in (301, 302):
-                        #enqueue the redirect target
+                        # enqueue the redirect target
                         target = response.headers.get('location')
+
                         # for internal redirects host will be the one from env,
                         # remove it
                         prefix = 'http://%s' % env['HTTP_HOST']
                         if target.startswith(prefix):
                             target = target.replace(prefix, '', 1)
-                        now = datetime.datetime.now()
-                        date = now - datetime.timedelta(days=1)
-                        yesterday = int(time.mktime(date.timetuple()))
-                        to_enqueue.append(([target], env['PATH_INFO'],
-                                           yesterday))
+
+                        ## also get rid of parameters and stuff, use
+                        ## iter_links - but without "base" tag, which we cant
+                        ## know here
+                        content = '<html><body><a href="%s">%s</a></body>' \
+                                  '</html>' % (target, target)
+                        ## this will return 1 link
+                        targets = [i for i in iter_links(content)]
+                        if targets:
+                            target = targets[0]
+
+                            now = datetime.datetime.now()
+                            date = now - datetime.timedelta(days=1)
+                            yesterday = int(time.mktime(date.timetuple()))
+                            to_enqueue.append(([target], env['PATH_INFO'],
+                                               yesterday))
 
                         status = 200
 
