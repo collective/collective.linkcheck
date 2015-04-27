@@ -94,9 +94,15 @@ def end_request(event):
         return
 
     hrefs = set()
+
     for href in iter_links(document):
+
         # Ignore anchors and javascript.
         if href.startswith('#') or href.startswith('javascript:'):
+            continue
+
+        # Ignore mailto links
+        if href.startswith('mailto:'):
             continue
 
         # handle relative urls
