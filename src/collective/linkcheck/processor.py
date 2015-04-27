@@ -146,7 +146,7 @@ def run(app, args, rate=5):
         handler.setLevel(level)
 
     logger = logging.getLogger("linkcheck.processor")
-    #logger.setLevel(level)
+    logger.setLevel(level)
     logger.info("looking for sites...")
 
     session = requests.Session(timeout=5)
@@ -358,11 +358,6 @@ def run(app, args, rate=5):
 
                         status = 200
 
-                print url, status
-                if status != 200:
-                    print "*"*76
-                    print "Error: %s -> %s" % (env['PATH_INFO'], status)
-
                 updates.append((url, status))
 
             # Pull URLs out of queue, actually removing them.
@@ -380,7 +375,6 @@ def run(app, args, rate=5):
                     url = tool.links[i]
                     urls.remove(url)
                 except KeyError:
-                    print "appending unchanged: %s" % (i)
                     unchanged.append(i)
 
             # This shouldn't happen to frequently.
@@ -395,7 +389,6 @@ def run(app, args, rate=5):
 
             # Apply status updates
             for url, status in updates:
-                print "updating: %s with %s" % (url, status)
                 tool.update(url, status)
 
             for arguments in to_enqueue:
