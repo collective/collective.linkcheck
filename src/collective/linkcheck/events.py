@@ -13,7 +13,9 @@ from ZODB.POSException import ConflictError
 
 from .interfaces import ILayer
 from .parse import iter_links
-from plone import api
+from .interfaces import ISettings
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
 
 
 logger = logging.getLogger("linkcheck.events")
@@ -27,11 +29,6 @@ def before_traverse(event):
 
 
 def end_request(event):
-
-    #No processing if 'check_on_request' setting is false
-    check_on_request = api.portal.get_registry_record('collective.linkcheck.interfaces.ISettings.check_on_request')
-    if not check_on_request:
-        return
 
     # Ignore internal requests.
     if event.request.get('HTTP_USER_AGENT') == 'Bobo':
@@ -51,6 +48,14 @@ def end_request(event):
     except AttributeError as exc:
         logger.warn("Did not find tool: %s." % exc)
         return
+
+    #No processing if 'check_on_request' setting is false
+    registry = getUtility(IRegistry, context=site)
+    settings = registry.forInterface(ISettings)
+    if not settings.check_on_request:
+        logger.info("Checking on request disabled")
+        return
+
 
     # Must be HTML.
     response = event.request.response

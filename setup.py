@@ -43,7 +43,6 @@ setup(name='collective.linkcheck',
           'zc.queue >= 1.3',
           'requests < 1.0.0',
           'plone.z3cform',
-          'plone.api'
       ],
       entry_points="""
       [z3c.autoinclude.plugin]
