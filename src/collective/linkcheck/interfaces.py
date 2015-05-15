@@ -90,3 +90,9 @@ class ISettings(Interface):
         required=False,
         default=True,
         )
+
+    content_types = schema.List(
+        title=_("Content types to check"),
+        description=_("List of content types to use on crawling and updating"),
+        value_type=schema.Choice(vocabulary='plone.app.vocabularies.PortalTypes')
+        )

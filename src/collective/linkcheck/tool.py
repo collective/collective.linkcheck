@@ -19,6 +19,7 @@ from Products.CMFCore.utils import registerToolInterface
 from .interfaces import ILinkCheckTool
 from .interfaces import ISettings
 from .queue import CompositeQueue
+from plone import api
 
 logger = logging.getLogger("linkcheck.events")
 
@@ -64,6 +65,17 @@ class LinkCheckTool(SimpleItem):
         self.index.clear()
         self.links.clear()
         self.counter = 0
+
+    security.declarePrivate("crawl")
+    def crawl(self):
+        portal_types = api.portal.get_registry_record('collective.linkcheck.interfaces.ISettings.content_types')
+
+        catalog = api.portal.get_tool('portal_catalog')
+        brains = catalog(portal_type=portal_types)
+        for brain in brains:
+            obj = brain.getObject()
+            obj()
+            logger.info('Crawling: checked {0}'.format(brain.getURL()))
 
     security.declarePrivate("enqueue")
     def enqueue(self, url):

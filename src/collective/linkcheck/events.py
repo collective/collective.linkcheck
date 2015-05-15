@@ -15,7 +15,9 @@ from .interfaces import ILayer
 from .parse import iter_links
 from .interfaces import ISettings
 from zope.component import getUtility
+from zope.component import getMultiAdapter
 from plone.registry.interfaces import IRegistry
+from plone import api
 
 
 logger = logging.getLogger("linkcheck.events")
@@ -53,7 +55,6 @@ def end_request(event):
     registry = getUtility(IRegistry, context=site)
     settings = registry.forInterface(ISettings)
     if not settings.check_on_request:
-        logger.info("Checking on request disabled")
         return
 
 
@@ -154,3 +155,12 @@ def end_request(event):
         transaction.commit()
     except ConflictError:
         transaction.abort()
+
+def modified_object(context, event):
+    content_types = api.portal.get_registry_record('collective.linkcheck.interfaces.ISettings.content_types')
+    if not(content_types and context.portal_type in content_types):
+        return
+    check_links_view = context.restrictedTraverse('@@linkcheck')
+    check_links_view()
+    logger.info('Checked links for modified {0}'.format(context.absolute_url()))                    
+

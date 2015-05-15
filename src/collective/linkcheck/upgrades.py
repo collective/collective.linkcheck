@@ -62,4 +62,6 @@ def update_registry_2(context):
     settings = registry.forInterface(ISettings, check=False)
     if not hasattr(settings, "check_on_request"):
         settings.check_on_request = True
+    if not hasattr(settings, "content_types"):
+        settings.content_types = []
     logger.info("Updated registry entries")

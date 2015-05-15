@@ -223,6 +223,20 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
 
         return rows
 
+    @button.buttonAndHandler(_(u"Crawl"), name='crawl')
+    def handleClear(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        self.tool.crawl()
+
+        logger.info("crawled the site.")
+
+        IStatusMessage(self.request).addStatusMessage(
+            _(u"All site crawled."), "info")
+
     @button.buttonAndHandler(_(u"Clear"), name='clear')
     def handleClear(self, action):
         data, errors = self.extractData()
