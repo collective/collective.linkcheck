@@ -35,6 +35,14 @@
       description="Updates Registry entry."
       handler=".upgrades.update_registry"
       />
+  <genericsetup:upgradeStep
+      source="1300"
+      destination="1301"
+      profile="collective.linkcheck:default"
+      title="Migrate from 1300 to 1301"
+      description="Updates next Registry entry."
+      handler=".upgrades.update_registry_2"
+      />
 
   <i18n:registerTranslations directory="locales" />
 

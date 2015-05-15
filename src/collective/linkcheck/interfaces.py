@@ -82,3 +82,11 @@ class ISettings(Interface):
             u"^http://t.co",
             ),
         )
+
+    check_on_request = schema.Bool(
+        title=_(u'Check on every request'),
+        description=_(u"Select this option to check the links on every "
+                      u"request. When disabled checks will be made only on request."),
+        required=False,
+        default=True,
+        )

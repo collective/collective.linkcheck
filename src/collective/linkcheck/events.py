@@ -13,6 +13,8 @@ from ZODB.POSException import ConflictError
 
 from .interfaces import ILayer
 from .parse import iter_links
+from plone import api
+
 
 logger = logging.getLogger("linkcheck.events")
 
@@ -25,6 +27,12 @@ def before_traverse(event):
 
 
 def end_request(event):
+
+    #No processing if 'check_on_request' setting is false
+    check_on_request = api.portal.get_registry_record('collective.linkcheck.interfaces.ISettings.check_on_request')
+    if not check_on_request:
+        return
+
     # Ignore internal requests.
     if event.request.get('HTTP_USER_AGENT') == 'Bobo':
         return

@@ -52,3 +52,14 @@ def update_registry(context):
     if not hasattr(settings, "report_urls_count"):
         settings.report_urls_count = 20
     logger.info("Updated registry entries")
+
+def update_registry_2(context):
+    """Next registry entry"""
+    setup_tool = getToolByName(context, 'portal_setup')
+    setup_tool.runImportStepFromProfile(PROFILE_ID, 'plone.app.registry')
+
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(ISettings, check=False)
+    if not hasattr(settings, "check_on_request"):
+        settings.check_on_request = True
+    logger.info("Updated registry entries")
