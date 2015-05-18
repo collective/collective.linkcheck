@@ -75,7 +75,6 @@ class CheckLinks(BrowserView):
         body = context()
 
         hrefs = set()
-        import ipdb;ipdb.set_trace()
         for href in iter_links(body):
 
             # Ignore anchors and javascript.

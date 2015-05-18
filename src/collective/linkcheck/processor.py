@@ -268,6 +268,20 @@ def run(app, args, rate=5):
                 for url in discard:
                     del tool.checked[url]
 
+            ##process crawling queue
+            ##disabled at the moment as there are problems with traversal
+            #catalog = getToolByName(tool, 'portal_catalog')
+            #crawl_uid = tool.crawl_dequeue()
+            #logger.info('Crawl iterator')
+            #while crawl_uid:
+            #    brains = catalog(UID=crawl_uid)
+            #    if brains:
+            #        obj = brains[0].getObject()
+            #        check_links_view = obj.restrictedTraverse('@@linkcheck')
+            #        check_links_view()
+            #        logger.info('Crawling: checked {0}'.format(obj.absolute_url()))
+            #    crawl_uid = tool.crawl_dequeue()
+
             # Fetch set of URLs to check (up to transaction size).
             queued = tool.queue[:settings.transaction_size]
             if not queued:

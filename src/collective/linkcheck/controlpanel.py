@@ -27,6 +27,7 @@ from z3c.form import button
 from z3c.form import field
 from z3c.form import group
 from z3c.form import widget
+from plone import api
 
 
 logger = logging.getLogger("linkcheck.controlpanel")
@@ -89,6 +90,8 @@ class ReportWidget(widget.Widget):
     def updated(self):
         return self.form.__parent__.get_modified_date()
 
+    def crawling_data(self):
+        return self.form.__parent__.crawling_data()
 
 class ReportGroup(group.Group):
     label = _(u"Report")
@@ -262,6 +265,11 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
 
         return body
 
+    def crawling_data(self):
+        uids = self.tool.crawl_queue._data
+        catalog = api.portal.get_tool('portal_catalog')
+        brains = catalog(UID=uids)
+        return brains
 
 ControlPanel = layout.wrap_form(
     ControlPanelEditForm,

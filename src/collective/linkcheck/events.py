@@ -160,6 +160,11 @@ def modified_object(context, event):
     content_types = api.portal.get_registry_record('collective.linkcheck.interfaces.ISettings.content_types')
     if not(content_types and context.portal_type in content_types):
         return
+    #I may find a way to process crawling asynchronously. 
+    #Right now there is a problem with traversal in a worker
+    #tool = api.portal.get_tool('portal_linkcheck')
+    #tool.crawl_enqueue(context.UID())
+    #return
     check_links_view = context.restrictedTraverse('@@linkcheck')
     check_links_view()
     logger.info('Checked links for modified {0}'.format(context.absolute_url()))                    

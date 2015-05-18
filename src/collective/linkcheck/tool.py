@@ -34,6 +34,9 @@ class LinkCheckTool(SimpleItem):
         # for link validity check.
         self.queue = CompositeQueue()
 
+        # Additional queue for internal crawler to revalidate the site
+        self.crawl_queue = CompositeQueue()
+
         # This is the link database. It maps a hyperlink index to a
         # tuple (timestamp, status, referers).
         self.checked = IOBTree()
@@ -60,6 +63,12 @@ class LinkCheckTool(SimpleItem):
                 self.queue.pull()
             except IndexError:
                 break
+        while True:
+            try:
+                self.crawl_queue.pull()
+            except IndexError:
+                break
+
 
         self.checked.clear()
         self.index.clear()
@@ -73,8 +82,11 @@ class LinkCheckTool(SimpleItem):
         catalog = api.portal.get_tool('portal_catalog')
         brains = catalog(portal_type=portal_types)
         for brain in brains:
+            #asyncronous crawling not working yet
+            #self.crawl_enqueue(brain.UID)
+            
             obj = brain.getObject()
-            obj()
+            obj.restrictedTraverse('@@linkcheck')()
             logger.info('Crawling: checked {0}'.format(brain.getURL()))
 
     security.declarePrivate("enqueue")
@@ -200,6 +212,15 @@ class LinkCheckTool(SimpleItem):
 
         return False
 
+    def crawl_enqueue(self, obj):
+        if not isinstance(obj, basestring):
+            obj = obj.UID()
+        self.crawl_queue.put(obj)
+
+
+    def crawl_dequeue(self):
+        if self.crawl_queue._data:
+            return self.crawl_queue.pull()
 
 InitializeClass(LinkCheckTool)
 registerToolInterface('portal_linkcheck', ILinkCheckTool)

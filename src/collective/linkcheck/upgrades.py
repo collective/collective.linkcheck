@@ -4,6 +4,7 @@ from Products.CMFCore.utils import getToolByName
 from logging import getLogger
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+from .queue import CompositeQueue
 
 PROFILE_ID = 'profile-collective.linkcheck:default'
 logger = getLogger("collective.linkcheck")
@@ -65,3 +66,6 @@ def update_registry_2(context):
     if not hasattr(settings, "content_types"):
         settings.content_types = []
     logger.info("Updated registry entries")
+    linkcheck_tool = getToolByName(context, 'portal_linkcheck')
+    if not hasattr(linkcheck_tool, "crawl_queue"):
+        linkcheck_tool.crawl_queue = CompositeQueue()

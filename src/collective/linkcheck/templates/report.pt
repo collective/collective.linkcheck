@@ -89,3 +89,18 @@
     </tr>
   </tbody>
 </table>
+<!--p i18n:domain="collective.linkcheck" i18n:translate="">Crawling queue</p-->
+<!--table id="linkcheck-crawl" class="listing" i18n:domain="collective.linkcheck">
+  <thead>
+    <tr>
+      <th i18n:translate="">Object</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr tal:repeat="entry view/crawling_data">
+      <td>
+        <a tal:attributes="href entry/getURL" tal:content="entry/Title" />
+      </td>
+    </tr>
+  </tbody>
+</table-->
