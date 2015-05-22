@@ -1,6 +1,7 @@
 from plone.app.layout.viewlets.common import ViewletBase
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
+from ZODB.POSException import ConflictError
 from plone import api
 import transaction
 from .parse import iter_links

@@ -227,7 +227,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         return rows
 
     @button.buttonAndHandler(_(u"Crawl"), name='crawl')
-    def handleClear(self, action):
+    def handleCrawl(self, action):
         data, errors = self.extractData()
         if errors:
             self.status = self.formErrorsMessage
