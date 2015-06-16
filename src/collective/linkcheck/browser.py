@@ -90,7 +90,7 @@ class CheckLinks(BrowserView):
             if href.startswith('.') or (
                     not href.startswith('/') and
                     '://' not in href):
-                href = '/'.join((base, href))
+                href = '/'.join((base_url, href))
 
             # Internal URLs are stored site-relative.
             if href.startswith(base_url):
