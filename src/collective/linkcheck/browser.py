@@ -79,7 +79,7 @@ class CheckLinks(BrowserView):
         #for now we generate body by calling the object
         try:
             body = context()
-        except error:
+        except Exception as error:
             logger.error(u'Problem when checking the page: {0}'.format(path))
             return    
 
