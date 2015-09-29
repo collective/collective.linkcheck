@@ -7,6 +7,10 @@ import transaction
 from .parse import iter_links
 import datetime
 import time
+import logging
+
+logger = logging.getLogger("linkcheck.controlpanel")
+
 
 class StatsViewlet(ViewletBase):
     available = True
@@ -73,7 +77,11 @@ class CheckLinks(BrowserView):
         tool.update(path, status)
 
         #for now we generate body by calling the object
-        body = context()
+        try:
+            body = context()
+        except error:
+            logger.error(u'Problem when checking the page: {0}'.format(path))
+            return    
 
         hrefs = set()
         for href in iter_links(body):
