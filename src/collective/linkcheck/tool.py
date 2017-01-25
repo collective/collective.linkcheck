@@ -77,10 +77,14 @@ class LinkCheckTool(SimpleItem):
 
     security.declarePrivate("crawl")
     def crawl(self):
-        portal_types = api.portal.get_registry_record('collective.linkcheck.interfaces.ISettings.content_types')
+        query = {}
+        portal_types = api.portal.get_registry_record(
+            'collective.linkcheck.interfaces.ISettings.content_types')
+        if portal_types:
+            query['portal_type'] = portal_types
 
         catalog = api.portal.get_tool('portal_catalog')
-        brains = catalog(portal_type=portal_types)
+        brains = catalog(query)
         for brain in brains:
             #asyncronous crawling not working yet
             #self.crawl_enqueue(brain.UID)
