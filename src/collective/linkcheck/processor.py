@@ -151,7 +151,7 @@ def run(app, args, rate=5):
     logger.setLevel(level)
     logger.info("looking for sites...")
 
-    session = requests.Session(timeout=5)
+    session = requests.Session()
 
     counter = 0
     sites = {}
