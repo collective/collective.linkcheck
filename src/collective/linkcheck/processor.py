@@ -24,7 +24,7 @@ from .parse import iter_links
 import sys
 import os
 
-#from ZPublisher.Test import publish_module
+# from ZPublisher.Test import publish_module
 
 
 def publish_module(module_name,
@@ -86,10 +86,10 @@ def publish_module(module_name,
             status = response.getStatus()
 
         if response:
-            ## this is our change: otherwise 404 will return 200
-            ## but we only want "real" 404 - otherwise the list will get full
-            ## of internal links with edit-links stuff that will return 5xx
-            ## codes.
+            # this is our change: otherwise 404 will return 200
+            # but we only want "real" 404 - otherwise the list will get full
+            # of internal links with edit-links stuff that will return 5xx
+            # codes.
             if response.getStatus() in (301, 302, 404):
                 status = response.getStatus()
 
@@ -270,19 +270,19 @@ def run(app, args, rate=5):
                 for url in discard:
                     del tool.checked[url]
 
-            ##process crawling queue
-            ##disabled at the moment as there are problems with traversal
-            #catalog = getToolByName(tool, 'portal_catalog')
-            #crawl_uid = tool.crawl_dequeue()
-            #logger.info('Crawl iterator')
-            #while crawl_uid:
-            #    brains = catalog(UID=crawl_uid)
-            #    if brains:
-            #        obj = brains[0].getObject()
-            #        check_links_view = obj.restrictedTraverse('@@linkcheck')
-            #        check_links_view()
-            #        logger.info('Crawling: checked {0}'.format(obj.absolute_url()))
-            #    crawl_uid = tool.crawl_dequeue()
+            # process crawling queue
+            # disabled at the moment as there are problems with traversal
+            # catalog = getToolByName(tool, 'portal_catalog')
+            # crawl_uid = tool.crawl_dequeue()
+            # logger.info('Crawl iterator')
+            # while crawl_uid:
+            #     brains = catalog(UID=crawl_uid)
+            #     if brains:
+            #         obj = brains[0].getObject()
+            #         check_links_view = obj.restrictedTraverse('@@linkcheck')
+            #         check_links_view()
+            #         logger.info('Crawling: checked {0}'.format(obj.absolute_url()))
+            #     crawl_uid = tool.crawl_dequeue()
 
             # Fetch set of URLs to check (up to transaction size).
             queued = tool.queue[:settings.transaction_size]
