@@ -28,6 +28,14 @@ class ISettings(Interface):
         default=5,
         )
 
+    timeout = schema.Int(
+        title=_(u'Timeout'),
+        description=_(u'The timeout in seconds. Increase when using a '
+                      u'slow network/proxy or link to slow sites.'),
+        required=False,
+        default=5,
+        )
+
     interval = schema.Int(
         title=_(u'Update interval'),
         description=_(u'The minimum number of hours between checking '

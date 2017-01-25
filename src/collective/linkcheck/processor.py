@@ -189,11 +189,13 @@ def run(app, args, rate=5):
                         r = None
 
                         try:
-                            r = session.get(url)
+                            logger.debug('Checking %s ...' % url)
+                            r = session.get(url, timeout=settings.timeout)
                         except requests.Timeout:
                             status_code = 504
+                            logger.debug('Timeout for %s' % url)
                         except requests.RequestException as exc:
-                            logger.warn(exc)
+                            logger.warn('Exception for %s: %s' % (url, exc))
                             status_code = 503
                         except UnicodeError as exc:
                             logger.warn("Unable to decode string: %r (%s)." % (

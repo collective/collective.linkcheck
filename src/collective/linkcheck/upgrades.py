@@ -54,6 +54,7 @@ def update_registry(context):
         settings.report_urls_count = 20
     logger.info("Updated registry entries")
 
+
 def update_registry_2(context):
     """Next registry entry"""
     setup_tool = getToolByName(context, 'portal_setup')
@@ -65,6 +66,8 @@ def update_registry_2(context):
         settings.check_on_request = True
     if not hasattr(settings, "content_types"):
         settings.content_types = []
+    if not hasattr(settings, "timeout"):
+        settings.timeout = 5
     logger.info("Updated registry entries")
     linkcheck_tool = getToolByName(context, 'portal_linkcheck')
     if not hasattr(linkcheck_tool, "crawl_queue"):
