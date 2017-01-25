@@ -85,14 +85,16 @@ class ISettings(Interface):
 
     check_on_request = schema.Bool(
         title=_(u'Check on every request'),
-        description=_(u"Select this option to check the links on every "
-                      u"request. When disabled checks will be made only on request."),
+        description=_(u'Select this option to check the links on every '
+                      u'request. When disabled checks will be made only on '
+                      u'explicit request.'),
         required=False,
         default=True,
         )
 
     content_types = schema.List(
-        title=_("Content types to check"),
-        description=_("List of content types to use on crawling and updating"),
-        value_type=schema.Choice(vocabulary='plone.app.vocabularies.PortalTypes')
+        title=_('Content types to check'),
+        description=_('List of content types to use on crawling and updating'),
+        value_type=schema.Choice(
+            vocabulary='plone.app.vocabularies.PortalTypes')
         )

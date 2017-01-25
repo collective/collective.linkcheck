@@ -35,6 +35,7 @@
       description="Updates Registry entry."
       handler=".upgrades.update_registry"
       />
+
   <genericsetup:upgradeStep
       source="1300"
       destination="1301"

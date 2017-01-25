@@ -15,7 +15,6 @@ from .interfaces import ILayer
 from .parse import iter_links
 from .interfaces import ISettings
 from zope.component import getUtility
-from zope.component import getMultiAdapter
 from plone.registry.interfaces import IRegistry
 from plone import api
 
@@ -51,12 +50,11 @@ def end_request(event):
         logger.warn("Did not find tool: %s." % exc)
         return
 
-    #No processing if 'check_on_request' setting is false
+    # No processing if 'check_on_request' setting is false
     registry = getUtility(IRegistry, context=site)
     settings = registry.forInterface(ISettings)
     if not settings.check_on_request:
         return
-
 
     # Must be HTML.
     response = event.request.response
@@ -142,7 +140,7 @@ def end_request(event):
     date = now - datetime.timedelta(days=1)
     yesterday = int(time.mktime(date.timetuple()))
 
-    #referer is nothing else than the actual_url. HTTP_HOST and PATH_INFO
+    # referer is nothing else than the actual_url. HTTP_HOST and PATH_INFO
     # give wrong URLs in VirtualHosting
 
     # Update link database
@@ -156,16 +154,18 @@ def end_request(event):
     except ConflictError:
         transaction.abort()
 
+
 def modified_object(context, event):
-    content_types = api.portal.get_registry_record('collective.linkcheck.interfaces.ISettings.content_types')
+    content_types = api.portal.get_registry_record(
+        'collective.linkcheck.interfaces.ISettings.content_types')
     if not(content_types and context.portal_type in content_types):
         return
-    #I may find a way to process crawling asynchronously. 
-    #Right now there is a problem with traversal in a worker
-    #tool = api.portal.get_tool('portal_linkcheck')
-    #tool.crawl_enqueue(context.UID())
-    #return
+    # I may find a way to process crawling asynchronously.
+    # Right now there is a problem with traversal in a worker
+    # tool = api.portal.get_tool('portal_linkcheck')
+    # tool.crawl_enqueue(context.UID())
+    # return
     check_links_view = context.restrictedTraverse('@@linkcheck')
     check_links_view()
-    logger.info('Checked links for modified {0}'.format(context.absolute_url()))                    
-
+    logger.info(
+        'Checked links for modified {0}'.format(context.absolute_url()))
