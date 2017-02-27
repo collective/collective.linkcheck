@@ -4,11 +4,40 @@ Changes
 1.3 (unreleased)
 ----------------
 
-- added german translations
+- Add a setting to select workflow-states to check on crawl and update.
+  [pbauer]
+
+- Add timeout setting.
+  [pbauer]
+
+- Allow recent versions of Requests.
+  [pbauer]
+
+- Add a setting to select portal_types to check on crawl and update.
+  [lewicki]
+
+- Add a view @@linkcheck to check links from object context
+  [lewicki]
+
+- Add setting to disable event triggering on each request.
+  [lewicki]
+
+- Handle mailto links
+  [Jörg Kubaile]
+
+- Handle relative urls
+  [Toni Fischer]
+
+- Add link to remove entry from the report list
+  [Jörg Kubaile]
+
+- Added german translations
   [petschki]
-- added https://raw.github.com/github/gitignore/master/Plone.gitignore
+
+- Added .gitignore
   [petschki]
-- add upgrade step for new registry entry
+
+- Add upgrade step for new registry entry
   [petschki]
 
 1.2 (2012-11-22)

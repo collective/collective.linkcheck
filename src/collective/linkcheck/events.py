@@ -155,17 +155,24 @@ def end_request(event):
         transaction.abort()
 
 
-def modified_object(context, event):
-    content_types = api.portal.get_registry_record(
-        'collective.linkcheck.interfaces.ISettings.content_types')
-    if not(content_types and context.portal_type in content_types):
+def modified_object(obj, event):
+    if not ILayer.providedBy(obj.REQUEST):
         return
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(ISettings)
+    types_to_check = settings.content_types
+    if types_to_check and obj.portal_type not in types_to_check:
+        return
+    states_to_check = settings.workflow_states
+    if states_to_check and api.content.get_state(obj) not in states_to_check:
+        return
+
     # I may find a way to process crawling asynchronously.
     # Right now there is a problem with traversal in a worker
     # tool = api.portal.get_tool('portal_linkcheck')
-    # tool.crawl_enqueue(context.UID())
+    # tool.crawl_enqueue(obj.UID())
     # return
-    check_links_view = context.restrictedTraverse('@@linkcheck')
+    check_links_view = obj.restrictedTraverse('@@linkcheck')
     check_links_view()
     logger.info(
-        'Checked links for modified {0}'.format(context.absolute_url()))
+        'Checked links for modified {0}'.format(obj.absolute_url()))

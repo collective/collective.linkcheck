@@ -100,9 +100,21 @@ class ISettings(Interface):
         default=True,
         )
 
-    content_types = schema.List(
+    content_types = schema.Tuple(
         title=_('Content types to check'),
-        description=_('List of content types to use on crawling and updating'),
+        description=_('Content types to check on crawling and updating'),
+        default=(),
+        missing_value=(),
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.PortalTypes')
+        )
+
+    workflow_states = schema.Tuple(
+        title=_('Workflow states to check'),
+        description=_('Check items in these states on crawling and updating'),
+        required=False,
+        default=(),
+        missing_value=(),
+        value_type=schema.Choice(
+            source='plone.app.vocabularies.WorkflowStates')
         )

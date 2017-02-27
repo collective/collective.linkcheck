@@ -77,10 +77,13 @@ class LinkCheckTool(SimpleItem):
     security.declarePrivate("crawl")
     def crawl(self):
         query = {}
-        portal_types = api.portal.get_registry_record(
-            'collective.linkcheck.interfaces.ISettings.content_types')
-        if portal_types:
-            query['portal_type'] = portal_types
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ISettings)
+        if settings.content_types:
+            query['portal_type'] = settings.content_types
+
+        if settings.workflow_states:
+            query['review_state'] = settings.workflow_states
 
         catalog = api.portal.get_tool('portal_catalog')
         brains = catalog(query)

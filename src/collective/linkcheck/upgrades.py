@@ -8,6 +8,7 @@ from .queue import CompositeQueue
 
 PROFILE_ID = 'profile-collective.linkcheck:default'
 logger = getLogger("collective.linkcheck")
+_marker = object()
 
 
 def upgrade_tool(tool):
@@ -62,12 +63,14 @@ def update_registry_2(context):
 
     registry = getUtility(IRegistry)
     settings = registry.forInterface(ISettings, check=False)
-    if not hasattr(settings, "check_on_request"):
+    if getattr(settings, "check_on_request", _marker) is not _marker:
         settings.check_on_request = True
-    if not hasattr(settings, "content_types"):
-        settings.content_types = []
-    if not hasattr(settings, "timeout"):
+    if getattr(settings, "content_types", _marker) is not _marker:
+        settings.content_types = ()
+    if getattr(settings, "timeout", _marker) is not _marker:
         settings.timeout = 5
+    if getattr(settings, "workflow_states", _marker) is not _marker:
+        settings.content_types = ()
     logger.info("Updated registry entries")
     linkcheck_tool = getToolByName(context, 'portal_linkcheck')
     if not hasattr(linkcheck_tool, "crawl_queue"):
