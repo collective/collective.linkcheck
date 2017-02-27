@@ -89,6 +89,14 @@
       layer=".interfaces.ILayer"
       />
 
+  <browser:page
+      name="linkcheck-export"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".export.Export"
+      permission="cmf.ManagePortal"
+      layer=".interfaces.ILayer"
+      />
+
   <browser:viewlet
       for="*"
       name="collective.linkcheck.stats"

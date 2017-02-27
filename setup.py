@@ -44,6 +44,7 @@ setup(name='collective.linkcheck',
           'requests',
           'plone.z3cform',
           'plone.api',
+          'tablib',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]

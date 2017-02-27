@@ -90,6 +90,7 @@ class ReportWidget(widget.Widget):
     def crawling_data(self):
         return self.form.__parent__.crawling_data()
 
+
 class ReportGroup(group.Group):
     label = _(u"Report")
     fields = field.Fields(
@@ -203,8 +204,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             url = self.tool.links[i]
             age = timestamp - (entry[0] or timestamp)
 
-            referers = filter(None, map(self.tool.links.get, entry[2])) \
-                       [:settings.referers]
+            referers = filter(None, map(self.tool.links.get, entry[2]))[:settings.referers]  # noqa
 
             try:
                 quoted_url = urllib.quote_plus(url)
@@ -250,6 +250,16 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
 
         IStatusMessage(self.request).addStatusMessage(
             _(u"All data cleared."), "info")
+
+    @button.buttonAndHandler(_(u"Export as csv"), name='export_csv')
+    def handleExportCSV(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        portal = api.portal.get()
+        return self.request.response.redirect(
+            portal.absolute_url() + '/@@linkcheck-export?export_type=csv')
 
     def RSS(self):
         body = self.rss_template()
