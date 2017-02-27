@@ -65,6 +65,10 @@ It's available from Plone's control panel overview.
     processor will attempt to publish the internal link and check that
     the response is good.
 
+    From the controlpanel you can also crawl the entire site for broken links.
+    You can constrain the content that is checked by type and workflow-state.
+    Beware that this can take a very long time!
+
 
 .. |RSS| image:: http://plone.org/rss.png
 
