@@ -1,25 +1,23 @@
-import re
-import time
-import datetime
-import logging
-
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
-from plone.memoize.volatile import cache
-
-from BTrees.IOBTree import IOBTree
-from BTrees.OIBTree import OIBTree
-from BTrees.IIBTree import IISet
-
+# -*- coding: utf-8 -*-
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
+from BTrees.IIBTree import IISet
+from BTrees.IOBTree import IOBTree
+from BTrees.OIBTree import OIBTree
 from OFS.SimpleItem import SimpleItem
 from Products.CMFCore.utils import registerToolInterface
-
-from .interfaces import ILinkCheckTool
-from .interfaces import ISettings
-from .queue import CompositeQueue
+from collective.linkcheck.interfaces import ILinkCheckTool
+from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.queue import CompositeQueue
 from plone import api
+from plone.memoize.volatile import cache
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
+
+import datetime
+import logging
+import re
+import time
 
 logger = logging.getLogger("linkcheck.events")
 
@@ -226,6 +224,7 @@ class LinkCheckTool(SimpleItem):
     def crawl_dequeue(self):
         if self.crawl_queue._data:
             return self.crawl_queue.pull()
+
 
 InitializeClass(LinkCheckTool)
 registerToolInterface('portal_linkcheck', ILinkCheckTool)

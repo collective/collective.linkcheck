@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 from ZODB.POSException import ConflictError
-from zc.queue._queue import BucketQueue
 from zc.queue import CompositeQueue
+from zc.queue._queue import BucketQueue
 
 
 class CompositeQueue(CompositeQueue):
@@ -66,7 +67,7 @@ def resolveQueueConflict(oldstate, committedstate, newstate, bucket=False):
     if set(committedstate.keys()) != set(newstate.keys()):
         raise ConflictError  # can't resolve
     for key, val in newstate.items():
-        if key not in ('_data', 'size')  and val != committedstate[key]:
+        if key not in ('_data', 'size') and val != committedstate[key]:
             raise ConflictError  # can't resolve
 
     # basically, we are ok with anything--willing to merge--

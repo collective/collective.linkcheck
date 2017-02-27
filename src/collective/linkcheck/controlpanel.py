@@ -1,33 +1,30 @@
-import time
-import logging
-import datetime
-import transaction
-import hashlib
-import urllib
-
+# -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
-from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.statusmessages.interfaces import IStatusMessage
 from ZPublisher.HTTPResponse import status_reasons
-from zExceptions import Redirect
-
-from zope.schema import Field
-
-from plone.memoize.instance import memoize
-from plone.z3cform import layout
+from collective.linkcheck import MessageFactory as _
+from collective.linkcheck.interfaces import ISettings
+from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.keyring.interfaces import IKeyManager
-from zope.component import getUtility
+from plone.memoize.instance import memoize
 from plone.registry.interfaces import IRegistry
-
-from collective.linkcheck.interfaces import ISettings
-from collective.linkcheck import MessageFactory as _
-
+from plone.z3cform import layout
 from z3c.form import button
 from z3c.form import field
 from z3c.form import group
 from z3c.form import widget
-from plone import api
+from zExceptions import Redirect
+from zope.component import getUtility
+from zope.schema import Field
+
+import datetime
+import hashlib
+import logging
+import time
+import transaction
+import urllib
 
 
 logger = logging.getLogger("linkcheck.controlpanel")
@@ -270,6 +267,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         catalog = api.portal.get_tool('portal_catalog')
         brains = catalog(UID=uids)
         return brains
+
 
 ControlPanel = layout.wrap_form(
     ControlPanelEditForm,

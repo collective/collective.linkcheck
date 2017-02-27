@@ -1,22 +1,21 @@
-import time
-import datetime
-import logging
-import gzip
-import transaction
-
-from zope.annotation.interfaces import IAnnotations
-from cStringIO import StringIO
-
-from Products.CMFPlone.interfaces import IPloneSiteRoot
+# -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from ZODB.POSException import ConflictError
-
-from .interfaces import ILayer
-from .parse import iter_links
-from .interfaces import ISettings
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
+from cStringIO import StringIO
+from collective.linkcheck.interfaces import ILayer
+from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.parse import iter_links
 from plone import api
+from plone.registry.interfaces import IRegistry
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
+
+import datetime
+import gzip
+import logging
+import time
+import transaction
 
 
 logger = logging.getLogger("linkcheck.events")

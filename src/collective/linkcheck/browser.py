@@ -1,13 +1,14 @@
-from plone.app.layout.viewlets.common import ViewletBase
+# -*- coding: utf-8 -*-
 from Products.Five import BrowserView
-from Products.CMFCore.utils import getToolByName
 from ZODB.POSException import ConflictError
+from collective.linkcheck.parse import iter_links
 from plone import api
-import transaction
-from .parse import iter_links
+from plone.app.layout.viewlets.common import ViewletBase
+
 import datetime
-import time
 import logging
+import time
+import transaction
 
 logger = logging.getLogger("linkcheck.controlpanel")
 
@@ -47,6 +48,7 @@ class StatsViewlet(ViewletBase):
         ratio = round(100 * float(len(self.tool.queue)) / self.active_count)
         return int(ratio)
 
+
 class CheckLinks(BrowserView):
     """Helper view to trigger link checks from the object context"""
 
@@ -54,7 +56,7 @@ class CheckLinks(BrowserView):
         """Based on collective.linkcheck.events.end_request"""
         context = self.context
         request = self.request
-        
+
         tool = api.portal.get_tool('portal_linkcheck')
         response = request.response
 
@@ -64,7 +66,7 @@ class CheckLinks(BrowserView):
         # Compute path given the actual URL, relative to the site root.
         base_url = api.portal.get().absolute_url()
 
-        #old way
+        # old way
         """
         actual_url = request.get('ACTUAL_URL', '')
         if not actual_url.startswith(base_url):
@@ -76,12 +78,12 @@ class CheckLinks(BrowserView):
         actual_url = context.absolute_url()
         tool.update(path, status)
 
-        #for now we generate body by calling the object
+        # for now we generate body by calling the object
         try:
             body = context()
-        except Exception as error:
+        except Exception:
             logger.error(u'Problem when checking the page: {0}'.format(path))
-            return    
+            return
 
         hrefs = set()
         for href in iter_links(body):
@@ -113,11 +115,10 @@ class CheckLinks(BrowserView):
 
         # We want all the hyperlinks in the document to be checked unless
         # it's already in the queue or it has been checked recently.
-        now = datetime.datetime.now()
-        date = now - datetime.timedelta(days=1)
+        date = datetime.datetime.now() - datetime.timedelta(days=1)
         yesterday = int(time.mktime(date.timetuple()))
 
-        #referer is nothing else than the actual_url. HTTP_HOST and PATH_INFO
+        # referer is nothing else than the actual_url. HTTP_HOST and PATH_INFO
         # give wrong URLs in VirtualHosting
 
         # Update link database

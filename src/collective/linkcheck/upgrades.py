@@ -1,10 +1,11 @@
-from .interfaces import ISettings
+# -*- coding: utf-8 -*-
 from BTrees.IIBTree import IISet
 from Products.CMFCore.utils import getToolByName
+from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.queue import CompositeQueue
 from logging import getLogger
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
-from .queue import CompositeQueue
 
 PROFILE_ID = 'profile-collective.linkcheck:default'
 logger = getLogger("collective.linkcheck")

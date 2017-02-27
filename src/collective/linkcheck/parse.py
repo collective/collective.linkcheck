@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 import logging
-
-import lxml.html
 import lxml.etree
+import lxml.html
 
 logger = logging.getLogger("linkcheck.parse")
 

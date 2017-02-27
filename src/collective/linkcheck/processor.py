@@ -1,30 +1,25 @@
-import time
-import logging
-import datetime
-import threading
-import transaction
-import requests
-
-from itertools import ifilterfalse, tee, ifilter
-from cStringIO import StringIO
-from Queue import Queue
-
+# -*- coding: utf-8 -*-
 from App.config import getConfiguration
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Queue import Queue
 from ZODB.POSException import ConflictError
-from zExceptions import Unauthorized
-
-from zope.component import getUtility
+from cStringIO import StringIO
+from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.parse import iter_links
+from itertools import ifilterfalse, tee, ifilter
 from plone.registry.interfaces import IRegistry
+from zExceptions import Unauthorized
+from zope.component import getUtility
 
-from .interfaces import ISettings
-from .parse import iter_links
-
-import sys
+import datetime
+import logging
 import os
-
-# from ZPublisher.Test import publish_module
+import requests
+import sys
+import threading
+import time
+import transaction
 
 
 def publish_module(module_name,
@@ -243,15 +238,13 @@ def run(app, args, rate=5):
                 # This timestamp is the threshold for items that need an
                 # update.
                 needs_update = int(time.mktime(
-                    (now - datetime.timedelta(hours=settings.interval)).\
-                    timetuple()
+                    (now - datetime.timedelta(hours=settings.interval)).timetuple()  # noqa
                     ))
 
                 # This timestamp is the threshold for items that are no
                 # longer active.
                 expired = int(time.mktime(
-                    (now - datetime.timedelta(days=settings.expiration)).\
-                    timetuple()
+                    (now - datetime.timedelta(days=settings.expiration)).timetuple()  # noqa
                     ))
 
                 discard = set()
@@ -281,7 +274,8 @@ def run(app, args, rate=5):
             #         obj = brains[0].getObject()
             #         check_links_view = obj.restrictedTraverse('@@linkcheck')
             #         check_links_view()
-            #         logger.info('Crawling: checked {0}'.format(obj.absolute_url()))
+            #         logger.info(
+            #             'Crawling: checked {0}'.format(obj.absolute_url()))
             #     crawl_uid = tool.crawl_dequeue()
 
             # Fetch set of URLs to check (up to transaction size).
@@ -303,10 +297,7 @@ def run(app, args, rate=5):
 
             # Must be HTTP or HTTPS
             external, invalid = partition(
-                lambda url: url.startswith('http://') or \
-                            url.startswith('https://'),
-                external
-                )
+                lambda url: url.startswith('http://') or url.startswith('https://'), external)  # noqa
 
             for url in external:
                 queue.put(url)
@@ -370,12 +361,12 @@ def run(app, args, rate=5):
                         if target.startswith(prefix):
                             target = target.replace(prefix, '', 1)
 
-                        ## also get rid of parameters and stuff, use
-                        ## iter_links - but without "base" tag, which we cant
-                        ## know here
+                        # also get rid of parameters and stuff, use
+                        # iter_links - but without "base" tag, which we cant
+                        # know here
                         content = '<html><body><a href="%s">%s</a></body>' \
                                   '</html>' % (target, target)
-                        ## this will return 1 link
+                        # this will return 1 link
                         targets = [i for i in iter_links(content)]
                         if targets:
                             target = targets[0]
