@@ -103,6 +103,7 @@ class ISettings(Interface):
     content_types = schema.Tuple(
         title=_('Content types to check'),
         description=_('Content types to check on crawling and updating'),
+        required=False,
         default=(),
         missing_value=(),
         value_type=schema.Choice(
