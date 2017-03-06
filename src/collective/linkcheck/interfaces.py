@@ -119,3 +119,21 @@ class ISettings(Interface):
         value_type=schema.Choice(
             source='plone.app.vocabularies.WorkflowStates')
         )
+
+    auth_list = schema.Dict(
+        title=_(u'Authentification'),
+        description=_(u'Links to adresses which use Basic Auth.'),
+        required=False,
+        key_type=schema.TextLine(
+            title=_(u'Url'),
+        ),
+        value_type=schema.Dict(
+            key_type=schema.TextLine(
+                title=_(u'Login'),
+            ),
+            value_type=schema.Password(
+                title=_(u'Password'),
+            ),
+        ),
+        default={u'http://example.com': {u'username': u'secret'}},
+    )
