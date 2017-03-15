@@ -135,6 +135,12 @@ def partition(pred, iterable):
     return ifilter(pred, t1), ifilterfalse(pred, t2)
 
 
+def get_auth(url, auth_list):
+    for auth_url in auth_list:
+        if url.startswith(auth_url):
+            return auth_list[auth_url].items()[0]
+
+
 def run(app, args, rate=5):
     # Adjust root logging handler levels
     level = getConfiguration().eventlog.getLowestHandlerLevel()
@@ -185,7 +191,9 @@ def run(app, args, rate=5):
 
                         try:
                             logger.debug('Checking %s ...' % url)
-                            r = session.get(url, timeout=settings.timeout)
+                            auth = get_auth(url, settings.auth_list)
+                            r = session.get(
+                                url, timeout=settings.timeout, auth=auth)
                         except requests.Timeout:
                             status_code = 504
                             logger.debug('Timeout for %s' % url)

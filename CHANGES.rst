@@ -4,6 +4,11 @@ Changes
 1.3 (unreleased)
 ----------------
 
+- Allow to export the report about broken links report in various formats.
+  Call @@linkcheck-export?export_type=json for the view. Supported formats are
+  csv, xlsx, xls, tsv, yaml, html and json.
+  [pbauer]
+
 - Add a setting to select workflow-states to check on crawl and update.
   [pbauer]
 

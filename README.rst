@@ -69,6 +69,12 @@ It's available from Plone's control panel overview.
     You can constrain the content that is checked by type and workflow-state.
     Beware that this can take a very long time!
 
+*Export*
+
+    You can export the report about broken links in various formats.
+    Call @@linkcheck-export?export_type=csv for the export.
+    Supported formats are: csv, xlsx, xls, tsv, yaml, html and json.
+
 
 .. |RSS| image:: http://plone.org/rss.png
 
