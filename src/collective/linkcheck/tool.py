@@ -96,14 +96,18 @@ class LinkCheckTool(SimpleItem):
     security.declarePrivate("enqueue")
     def enqueue(self, url):
         index = self.index.get(url)
-
         if index is None:
+            # a really new url
             index = self.store(url)
         else:
-            entry = self.checked.get(-1 if index is None else index)
-            entry = None, entry[1], entry[2]
-            self.checked[index] = entry
-
+            entry = self.checked.get(index)
+            if entry is not None and entry:
+                entry = None, entry[1], entry[2]
+                self.checked[index] = entry
+            else:
+                # reset empty entry
+                self.remove(url)
+                index = self.store(url)
         self.queue.put(index)
         return index
 
