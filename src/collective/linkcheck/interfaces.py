@@ -2,6 +2,7 @@
 from collective.linkcheck import MessageFactory as _
 from zope import schema
 from zope.interface import Interface
+from zope.interface import Invalid
 
 
 class ILayer(Interface):
@@ -10,6 +11,13 @@ class ILayer(Interface):
 
 class ILinkCheckTool(Interface):
     """Tool that performs link validity checking and reporting."""
+
+
+def valid_auth(value):
+    for entry in value:
+        if entry.count('|') < 2:
+            raise Invalid(_(u"Each entry must contain at least two '|'"))
+    return True
 
 
 class ISettings(Interface):
@@ -120,20 +128,11 @@ class ISettings(Interface):
             source='plone.app.vocabularies.WorkflowStates')
         )
 
-    auth_list = schema.Dict(
+    auth_list = schema.Tuple(
         title=_(u'Authentification'),
-        description=_(u'Links to adresses which use Basic Auth.'),
+        description=_(u'Links to adresses which use Basic Auth. Format is URL|USERNAME|PASSWORD separated by "|" (the password can contain that caracter).'),  # noqa: E501
+        value_type=schema.TextLine(),
+        default=(),
         required=False,
-        key_type=schema.TextLine(
-            title=_(u'Url'),
-        ),
-        value_type=schema.Dict(
-            key_type=schema.TextLine(
-                title=_(u'Login'),
-            ),
-            value_type=schema.Password(
-                title=_(u'Password'),
-            ),
-        ),
-        default={u'http://example.com': {u'username': u'secret'}},
+        constraint=valid_auth,
     )

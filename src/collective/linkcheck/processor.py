@@ -136,9 +136,9 @@ def partition(pred, iterable):
 
 
 def get_auth(url, auth_list):
-    for auth_url in auth_list:
+    for auth_url, username, password in auth_list.split('|', 2):
         if url.startswith(auth_url):
-            return auth_list[auth_url].items()[0]
+            return (username, password)
 
 
 def run(app, args, rate=5):
