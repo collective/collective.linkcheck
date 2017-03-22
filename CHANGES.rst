@@ -1,8 +1,8 @@
 Changes
 =======
 
-1.3 (unreleased)
-----------------
+1.3.dev1_gww (2017-03-22)
+-------------------------
 
 - Allow to export the report about broken links report in various formats.
   Call @@linkcheck-export?export_type=json for the view. Supported formats are
