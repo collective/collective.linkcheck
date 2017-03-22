@@ -91,6 +91,9 @@ def end_request(event):
         encoding = "latin-1"
 
     body = response.body
+    if not body:
+        return
+
     if response.headers.get('content-encoding') == 'gzip':
         try:
             body = gzip.GzipFile(fileobj=StringIO(body)).read()

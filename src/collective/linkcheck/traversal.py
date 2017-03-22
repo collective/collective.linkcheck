@@ -25,14 +25,14 @@ class Feed(Implicit):
     def index_html(self, auth=None):
         """Publish feed."""
 
-        view = ControlPanelEditForm(self.aq_parent, self.REQUEST)
+        view = ControlPanelEditForm(self, self.REQUEST)
 
         if auth is None:
-            if not checkPermission('cmf.ManagePortal', self.context):
-                raise Unauthorized(self.__name__)
+            if checkPermission('cmf.ManagePortal', self.aq_parent):
+                return view.RSS()
 
         if auth != view.get_auth_token():
-            raise Unauthorized(self.__name__)
+            raise Unauthorized('Invalid token')
 
         return view.RSS()
 

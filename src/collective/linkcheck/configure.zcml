@@ -85,6 +85,7 @@
       name="linkcheck-feed"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       class=".controlpanel.ControlPanel"
+      template="templates/empty.pt"
       permission="zope.Public"
       layer=".interfaces.ILayer"
       />
