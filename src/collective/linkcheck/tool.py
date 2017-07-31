@@ -171,8 +171,10 @@ class LinkCheckTool(SimpleItem):
     security.declarePrivate("remove")
     def remove(self, url):
         index = self.index.get(url)
-        del self.index[url]
-        del self.checked[index]
+        if url in self.index:
+            del self.index[url]
+        if index and index in self.checked:
+            del self.checked[index]
 
     security.declarePrivate("update")
     def update(self, href, status):
