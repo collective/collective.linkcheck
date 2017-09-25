@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: collective.linkchecker\n"
-"POT-Creation-Date: 2015-04-23 11:52+0000\n"
+"POT-Creation-Date: 2017-09-25 13:08+0000\n"
 "PO-Revision-Date: 2013-09-24 10:13+0100\n"
 "Last-Translator: Peter Mathis <peter.mathis@kombinat.at>\n"
 "Language-Team: Kombinat Media Gestalter GmbH <office@kombinat.at>\n"
@@ -15,184 +15,252 @@ msgstr ""
 "Domain: DOMAIN\n"
 "X-Generator: Poedit 1.5.3\n"
 
-#: ./../templates/report.pt:68
+#: ../templates/report.pt:68
 msgid "${age} days"
 msgstr "${age} Tage"
 
-#: ./../templates/report.pt:62
+#: ../templates/report.pt:62
 msgid "${age} hours"
 msgstr "${age} Stunden"
 
-#: ./../templates/report.pt:56
+#: ../templates/report.pt:56
 msgid "${age} minutes"
 msgstr "${age} Minuten"
 
-#: ./../templates/report.pt:53
+#: ../templates/report.pt:53
 msgid "${age} seconds"
 msgstr "${age} Sekunden"
 
-#: ./../templates/stats.pt:12
+#: ../templates/stats.pt:12
 msgid "${count} updates per transaction."
 msgstr "${count} Aktualisierungen/Transaktion"
 
-#: ./../templates/report.pt:31
+#: ../templates/report.pt:31
 msgid "${referers} pages"
 msgstr "${referers} Seite(n)"
 
-#: ./../templates/report.pt:64
+#: ../templates/report.pt:64
 msgid "A day"
 msgstr "Ein Tag"
 
-#: ./../templates/report.pt:22
+#: ../templates/report.pt:22
 msgid "Action"
 msgstr "Aktion"
 
-#: ./../templates/stats.pt:4
+#: ../templates/stats.pt:4
 msgid "Active links"
 msgstr "Aktive Links"
 
-#: ./../templates/report.pt:21
+#: ../templates/report.pt:21
 msgid "Age"
 msgstr "Alter"
 
-#: ./../controlpanel.py:238
+#: ../controlpanel.py:252
 msgid "All data cleared."
 msgstr "Alle Daten gelöscht."
 
-#: ./../templates/report.pt:58
+#: ../controlpanel.py:238
+msgid "All site crawled."
+msgstr ""
+
+#: ../templates/report.pt:58
 msgid "An hour"
 msgstr "Eine Stunde"
 
-#: ./../templates/stats.pt:10
+#: ../interfaces.py:132
+msgid "Authentification"
+msgstr "Authentifizierung"
+
+#: ../templates/stats.pt:10
 msgid "Average entropy"
 msgstr "Durchschnittliche Auslastung"
 
-#: ./../controlpanel.py:226
+#: ../interfaces.py:123
+msgid "Check items in these states on crawling and updating"
+msgstr "Inhalten mit folgenden Status sollen überpfüft werden"
+
+#: ../interfaces.py:103
+msgid "Check on every request"
+msgstr "Bei jedem Request überprüfen"
+
+#: ../controlpanel.py:240
 msgid "Clear"
 msgstr "Löschen"
 
-#: ./../interfaces.py:25
+#: ../controlpanel.py:226
+msgid "Clear and crawl"
+msgstr "Löschen und die ganze Seite überprüfen"
+
+#: ../interfaces.py:33
 msgid "Concurrency"
 msgstr "Anzahl Linkchecker-Threads"
 
-#: ./../templates/report.pt:75
+#: ../interfaces.py:112
+msgid "Content types to check"
+msgstr "Inhaltstypen überprüfen"
+
+#: ../interfaces.py:113
+msgid "Content types to check on crawling and updating"
+msgstr "Folgende Inhaltstypen werden beim crawlen und ändern geprüft"
+
+#: ../interfaces.py:19
+msgid "Each entry must contain at least two '|'"
+msgstr "Jeder Eintrag muss mindestens zwei '|' enthalten "
+
+#: ../templates/report.pt:75
 msgid "Enqueue"
 msgstr "erneut prüfen"
 
-#: ./../interfaces.py:40
+#: ../interfaces.py:56
 msgid "Expiration"
 msgstr "Gültigkeitszeitraum"
 
-#: ./../interfaces.py:74
+#: ../controlpanel.py:254
+msgid "Export as csv"
+msgstr "Als csv exportieren"
+
+#: ../interfaces.py:90
 msgid "Ignore list"
 msgstr "Ignorierte Links"
 
-#: ./../templates/report.pt:85
-#: ./../templates/stats.pt:7
+#: ../templates/report.pt:85
+#: ../templates/stats.pt:7
 msgid "In queue"
 msgstr "In der Queue"
 
-#: ./../templates/report.pt:4
+#: ../configure.zcml:19
+msgid "Installs tool, control panel and default settings."
+msgstr ""
+
+#: ../templates/report.pt:4
 msgid "Last updated ${date}."
 msgstr "zuletzt aktualisiert am ${date}"
 
-#: ./../controlpanel.py:125
-#: ./../profiles/default/controlpanel.xml
+#: ../controlpanel.py:126
+#: ../profiles/default/controlpanel.xml
 msgid "Link validity"
 msgstr "Überprüfung externer Links"
 
-#: ./../controlpanel.py:99
+#: ../configure.zcml:19
+msgid "Link validity checking and reporting tools"
+msgstr ""
+
+#: ../interfaces.py:133
+msgid "Links to adresses which use Basic Auth. Format is URL|USERNAME|PASSWORD separated by \"|\" (the password can contain that caracter)."
+msgstr ""
+
+#: ../controlpanel.py:100
 msgid "Problems"
 msgstr "Probleme"
 
-#: ./../templates/report.pt:8
+#: ../templates/report.pt:8
 msgid "RSS-feed available. Click the orange icon."
 msgstr "RSS-Feed vorhanden. Klicken Sie das orange Icon."
 
-#: ./../interfaces.py:66
+#: ../interfaces.py:82
 msgid "Referer limit"
 msgstr "Referer Limit"
 
-#: ./../templates/report.pt:40
+#: ../templates/report.pt:40
 msgid "Referring pages:"
 msgstr "Verweisende Seite(n)"
 
-#: ./../templates/report.pt:81
+#: ../templates/report.pt:81
 msgid "Remove"
 msgstr "Entfernen"
 
-#: ./../controlpanel.py:94
+#: ../controlpanel.py:95
 msgid "Report"
 msgstr "Bericht"
 
-#: ./../interfaces.py:18
+#: ../interfaces.py:26
 msgid "Report Urls count"
 msgstr "Anzahl der angezeigten Adressen"
 
-#: ./../interfaces.py:58
+#: ../interfaces.py:104
+msgid "Select this option to check the links on every request. When disabled checks will be made only on explicit request."
+msgstr "Wählen Sie diese Option um Links bei jedem Aufruf einer Seite zu überprüfen."
+
+#: ../interfaces.py:74
 msgid "Select this option to publish internal links that have not been requested, and thus have no recorded response status."
 msgstr "Aktivieren um intern verlinkte Seiten zu überprüfen"
 
-#: ./../controlpanel.py:116
+#: ../controlpanel.py:117
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: ./../templates/stats.pt:2
+#: ../templates/stats.pt:2
 msgid "Statistics"
 msgstr "Statistik"
 
-#: ./../templates/report.pt:20
+#: ../templates/report.pt:20
 msgid "Status"
 msgstr "Status"
 
-#: ./../interfaces.py:67
+#: ../interfaces.py:83
 msgid "The database will store up to this number of referring links for each entry."
 msgstr "Die Datenbank speichert maximal soviele verweisenden Links pro Eintrag."
 
-#: ./../interfaces.py:33
+#: ../interfaces.py:49
 msgid "The minimum number of hours between checking the same link to update its link validity status."
 msgstr "Dauer in Stunden zwischen der erneuten Überprüfung von fehlerhaften Links."
 
-#: ./../interfaces.py:19
+#: ../interfaces.py:27
 msgid "The number of Urls to show in the report view."
 msgstr "maximale Anzahl der URLs die im Bericht angezeigt werden"
 
-#: ./../interfaces.py:50
+#: ../interfaces.py:66
 msgid "The number of items pulled out of the worker queue for every transaction."
 msgstr "Anzahl der zu prüfenden Links pro Transaktion."
 
-#: ./../interfaces.py:41
+#: ../interfaces.py:41
+msgid "The timeout in seconds. Increase when using a slow network/proxy or link to slow sites."
+msgstr "Der Timeout in Sekunden. Erhöhen Sie diesen Wert wenn Sie ein langsames Netzwerk/Proxy verwenden oder zu sehr langsamen Seiten verlinken."
+
+#: ../interfaces.py:57
 msgid "This decides the link expiration threshold. Enter the number of days that a link should be valid after an appearance in the page output."
 msgstr "Anzahl der Tage wie lange ein nicht mehr verwendeter Link in der Datenbank gespeichert bleiben soll."
 
-#: ./../interfaces.py:26
+#: ../interfaces.py:34
 msgid "This decides the number of simultaneous downloads."
 msgstr "Dieser Wert gibt die Anzahl der Threads zur gleichzeitigen Überprüfung von Links an."
 
-#: ./../controlpanel.py:100
+#: ../templates/rss.pt:17
+msgid "This feed contains entries for links with a bad status."
+msgstr "Dieser rss-Feed enthält Einträge für Links die Fehler verursachen."
+
+#: ../controlpanel.py:101
 msgid "This table lists the top URLs with a bad status. To retry a URL immediately, select \"Enqueue\". Each entry expands to display the pages that the link appeared on and the location in the HTML markup."
 msgstr "Dieser Bericht zeigt die Top URLs mit kritischem Status. Klicken Sie auf die URL um mehr Informationen zu erhalten (verlinkte Seite, Position im HTML Code)"
 
-#: ./../interfaces.py:49
+#: ../interfaces.py:40
+msgid "Timeout"
+msgstr ""
+
+#: ../interfaces.py:65
 msgid "Transaction size"
 msgstr "Transaktionsgröße"
 
-#: ./../templates/report.pt:19
+#: ../templates/report.pt:19
 msgid "URL"
 msgstr "URL"
 
-#: ./../interfaces.py:32
+#: ../interfaces.py:48
 msgid "Update interval"
 msgstr "Aktualisierungsinterval"
 
-#: ./../interfaces.py:57
+#: ../interfaces.py:73
 msgid "Use publisher"
 msgstr "Benutze internen Publisher"
 
-#: ./../interfaces.py:75
+#: ../interfaces.py:91
 msgid "Use regular expressions to prevent links from appearing in the list. One expression per line (e.g. \"^http://bit.ly\")."
 msgstr "Benutzen Sie reguläre Ausdrücke um die Überprüfung zu verhindern. Geben Sie einen Ausdruck pro Zeile an."
 
-#: ./../controlpanel.py:126
+#: ../controlpanel.py:127
 msgid "View report and configure operation."
 msgstr "Bericht und Einstellungsansicht"
+
+#: ../interfaces.py:122
+msgid "Workflow states to check"
+msgstr "Workflow Status überprüfen"
