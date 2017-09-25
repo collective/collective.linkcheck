@@ -4,7 +4,17 @@ Changes
 1.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Update german translations
+  [pbauer]
+
+- Clear before crawling site
+  [pbauer]
+
+- Catch error when auth is empty
+  [pbauer]
+
+- Add fallbacks when trying to remove empty entries
+  [pbauer]
 
 
 1.4.dev1_gww (2017-03-22)
