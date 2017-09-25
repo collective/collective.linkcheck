@@ -223,7 +223,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
 
         return rows
 
-    @button.buttonAndHandler(_(u"Crawl"), name='crawl')
+    @button.buttonAndHandler(_(u"Clear and crawl"), name='crawl')
     def handleCrawl(self, action):
         data, errors = self.extractData()
         if errors:

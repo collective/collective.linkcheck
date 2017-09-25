@@ -30,6 +30,10 @@ def before_traverse(event):
 
 def end_request(event):
 
+    # Skip control panel view.
+    if '@@linkcheck-controlpanel' in event.request['PATH_INFO']:
+        return
+
     # Ignore internal requests.
     if event.request.get('HTTP_USER_AGENT') == 'Bobo':
         return
@@ -75,14 +79,11 @@ def end_request(event):
         return
 
     path = actual_url[len(base_url):]
+
     tool.update(path, status)
 
     # Must be good response.
     if status != 200:
-        return
-
-    # Skip control panel view.
-    if '@@linkcheck-controlpanel' in event.request['PATH_INFO']:
         return
 
     try:

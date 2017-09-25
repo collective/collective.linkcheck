@@ -74,6 +74,7 @@ class LinkCheckTool(SimpleItem):
 
     security.declarePrivate("crawl")
     def crawl(self):
+        self.clear()
         query = {}
         registry = getUtility(IRegistry)
         settings = registry.forInterface(ISettings)
@@ -179,7 +180,6 @@ class LinkCheckTool(SimpleItem):
     security.declarePrivate("update")
     def update(self, href, status):
         """Update link status."""
-
         now = datetime.datetime.now()
         timestamp = int(time.mktime(now.timetuple()))
 
