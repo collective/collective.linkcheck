@@ -1,32 +1,30 @@
-import time
-import logging
-import datetime
-import transaction
-import hashlib
-import urllib
-
+# -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
-from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.statusmessages.interfaces import IStatusMessage
 from ZPublisher.HTTPResponse import status_reasons
-from zExceptions import Redirect
-
-from zope.schema import Field
-
-from plone.memoize.instance import memoize
-from plone.z3cform import layout
+from collective.linkcheck import MessageFactory as _
+from collective.linkcheck.interfaces import ISettings
+from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.keyring.interfaces import IKeyManager
-from zope.component import getUtility
+from plone.memoize.instance import memoize
 from plone.registry.interfaces import IRegistry
-
-from collective.linkcheck.interfaces import ISettings
-from collective.linkcheck import MessageFactory as _
-
+from plone.z3cform import layout
 from z3c.form import button
 from z3c.form import field
 from z3c.form import group
 from z3c.form import widget
+from zExceptions import Redirect
+from zope.component import getUtility
+from zope.schema import Field
+
+import datetime
+import hashlib
+import logging
+import time
+import transaction
+import urllib
 
 
 logger = logging.getLogger("linkcheck.controlpanel")
@@ -69,7 +67,7 @@ class ReportWidget(widget.Widget):
 
     @property
     @memoize
-    def enqueue_url(self):
+    def action_url(self):
         return self.request.getURL()
 
     @property
@@ -88,6 +86,9 @@ class ReportWidget(widget.Widget):
     @property
     def updated(self):
         return self.form.__parent__.get_modified_date()
+
+    def crawling_data(self):
+        return self.form.__parent__.crawling_data()
 
 
 class ReportGroup(group.Group):
@@ -144,6 +145,14 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             location = self.request.getURL()
             raise Redirect(location)
 
+        url = self.request.get('remove')
+        if url is not None:
+            url = urllib.unquote_plus(url)
+            self.tool.remove(url)
+            transaction.commit()
+            location = self.request.getURL()
+            raise Redirect(location)
+
         super(ControlPanelEditForm, self).update()
 
     def get_auth_token(self):
@@ -195,8 +204,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             url = self.tool.links[i]
             age = timestamp - (entry[0] or timestamp)
 
-            referers = filter(None, map(self.tool.links.get, entry[2])) \
-                       [:settings.referers]
+            referers = filter(None, map(self.tool.links.get, entry[2]))[:settings.referers]  # noqa
 
             try:
                 quoted_url = urllib.quote_plus(url)
@@ -215,6 +223,20 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
 
         return rows
 
+    @button.buttonAndHandler(_(u"Clear and crawl"), name='crawl')
+    def handleCrawl(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        self.tool.crawl()
+
+        logger.info("crawled the site.")
+
+        IStatusMessage(self.request).addStatusMessage(
+            _(u"All site crawled."), "info")
+
     @button.buttonAndHandler(_(u"Clear"), name='clear')
     def handleClear(self, action):
         data, errors = self.extractData()
@@ -229,6 +251,16 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
         IStatusMessage(self.request).addStatusMessage(
             _(u"All data cleared."), "info")
 
+    @button.buttonAndHandler(_(u"Export as csv"), name='export_csv')
+    def handleExportCSV(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        portal = api.portal.get()
+        return self.request.response.redirect(
+            portal.absolute_url() + '/@@linkcheck-export?export_type=csv')
+
     def RSS(self):
         body = self.rss_template()
 
@@ -239,6 +271,12 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
             )
 
         return body
+
+    def crawling_data(self):
+        uids = self.tool.crawl_queue._data
+        catalog = api.portal.get_tool('portal_catalog')
+        brains = catalog(UID=uids)
+        return brains
 
 
 ControlPanel = layout.wrap_form(

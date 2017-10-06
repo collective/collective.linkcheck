@@ -1,24 +1,23 @@
-import re
-import time
-import datetime
-import logging
-
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
-from plone.memoize.volatile import cache
-
-from BTrees.IOBTree import IOBTree
-from BTrees.OIBTree import OIBTree
-from BTrees.IIBTree import IISet
-
+# -*- coding: utf-8 -*-
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
+from BTrees.IIBTree import IISet
+from BTrees.IOBTree import IOBTree
+from BTrees.OIBTree import OIBTree
 from OFS.SimpleItem import SimpleItem
 from Products.CMFCore.utils import registerToolInterface
+from collective.linkcheck.interfaces import ILinkCheckTool
+from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.queue import CompositeQueue
+from plone import api
+from plone.memoize.volatile import cache
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 
-from .interfaces import ILinkCheckTool
-from .interfaces import ISettings
-from .queue import CompositeQueue
+import datetime
+import logging
+import re
+import time
 
 logger = logging.getLogger("linkcheck.events")
 
@@ -32,6 +31,9 @@ class LinkCheckTool(SimpleItem):
         # This is the work queue; items in this queue are scheduled
         # for link validity check.
         self.queue = CompositeQueue()
+
+        # Additional queue for internal crawler to revalidate the site
+        self.crawl_queue = CompositeQueue()
 
         # This is the link database. It maps a hyperlink index to a
         # tuple (timestamp, status, referers).
@@ -59,23 +61,54 @@ class LinkCheckTool(SimpleItem):
                 self.queue.pull()
             except IndexError:
                 break
+        while True:
+            try:
+                self.crawl_queue.pull()
+            except IndexError:
+                break
 
         self.checked.clear()
         self.index.clear()
         self.links.clear()
         self.counter = 0
 
+    security.declarePrivate("crawl")
+    def crawl(self):
+        self.clear()
+        query = {}
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ISettings)
+        if settings.content_types:
+            query['portal_type'] = settings.content_types
+
+        if settings.workflow_states:
+            query['review_state'] = settings.workflow_states
+
+        catalog = api.portal.get_tool('portal_catalog')
+        brains = catalog(query)
+        for brain in brains:
+            # asyncronous crawling not working yet
+            # self.crawl_enqueue(brain.UID)
+
+            obj = brain.getObject()
+            obj.restrictedTraverse('@@linkcheck')()
+            logger.info('Crawling: checked {0}'.format(brain.getURL()))
+
     security.declarePrivate("enqueue")
     def enqueue(self, url):
         index = self.index.get(url)
-
         if index is None:
+            # a really new url
             index = self.store(url)
         else:
-            entry = self.checked.get(-1 if index is None else index)
-            entry = None, entry[1], entry[2]
-            self.checked[index] = entry
-
+            entry = self.checked.get(index)
+            if entry is not None and entry:
+                entry = None, entry[1], entry[2]
+                self.checked[index] = entry
+            else:
+                # reset empty entry
+                self.remove(url)
+                index = self.store(url)
         self.queue.put(index)
         return index
 
@@ -136,10 +169,17 @@ class LinkCheckTool(SimpleItem):
         self.counter += 1
         return index
 
+    security.declarePrivate("remove")
+    def remove(self, url):
+        index = self.index.get(url)
+        if url in self.index:
+            del self.index[url]
+        if index and index in self.checked:
+            del self.checked[index]
+
     security.declarePrivate("update")
     def update(self, href, status):
         """Update link status."""
-
         now = datetime.datetime.now()
         timestamp = int(time.mktime(now.timetuple()))
 
@@ -181,6 +221,15 @@ class LinkCheckTool(SimpleItem):
                 return True
 
         return False
+
+    def crawl_enqueue(self, obj):
+        if not isinstance(obj, basestring):
+            obj = obj.UID()
+        self.crawl_queue.put(obj)
+
+    def crawl_dequeue(self):
+        if self.crawl_queue._data:
+            return self.crawl_queue.pull()
 
 
 InitializeClass(LinkCheckTool)

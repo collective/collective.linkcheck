@@ -1,15 +1,13 @@
-from zope.interface import implements
-from zope.traversing.interfaces import ITraversable
-from zope.component import adapts
-
-from Products.CMFCore.interfaces import ISiteRoot
+# -*- coding: utf-8 -*-
 from Acquisition import Implicit
-
-from zope.security import checkPermission
+from Products.CMFCore.interfaces import ISiteRoot
+from collective.linkcheck.controlpanel import ControlPanelEditForm
+from collective.linkcheck.interfaces import ILayer
 from zExceptions import Unauthorized
-
-from .interfaces import ILayer
-from .controlpanel import ControlPanelEditForm
+from zope.component import adapts
+from zope.interface import implements
+from zope.security import checkPermission
+from zope.traversing.interfaces import ITraversable
 
 
 class Feed(Implicit):
@@ -27,14 +25,14 @@ class Feed(Implicit):
     def index_html(self, auth=None):
         """Publish feed."""
 
-        view = ControlPanelEditForm(self.aq_parent, self.REQUEST)
+        view = ControlPanelEditForm(self, self.REQUEST)
 
         if auth is None:
-            if not checkPermission('cmf.ManagePortal', self.context):
-                raise Unauthorized(self.__name__)
+            if checkPermission('cmf.ManagePortal', self.aq_parent):
+                return view.RSS()
 
         if auth != view.get_auth_token():
-            raise Unauthorized(self.__name__)
+            raise Unauthorized('Invalid token')
 
         return view.RSS()
 

@@ -36,6 +36,15 @@
       handler=".upgrades.update_registry"
       />
 
+  <genericsetup:upgradeStep
+      source="1300"
+      destination="1301"
+      profile="collective.linkcheck:default"
+      title="Migrate from 1300 to 1301"
+      description="Updates next Registry entry."
+      handler=".upgrades.update_registry_2"
+      />
+
   <i18n:registerTranslations directory="locales" />
 
   <!-- Lifecycle events -->
@@ -49,6 +58,13 @@
       for="zope.publisher.interfaces.IEndRequestEvent"
       handler=".events.end_request"
       />
+
+  <subscriber
+      for="Products.CMFCore.interfaces.IContentish
+           zope.lifecycleevent.IObjectModifiedEvent"
+      handler=".events.modified_object"
+      />
+
 
   <!-- Control panel -->
 
@@ -69,7 +85,16 @@
       name="linkcheck-feed"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       class=".controlpanel.ControlPanel"
+      template="templates/empty.pt"
       permission="zope.Public"
+      layer=".interfaces.ILayer"
+      />
+
+  <browser:page
+      name="linkcheck-export"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".export.Export"
+      permission="cmf.ManagePortal"
       layer=".interfaces.ILayer"
       />
 
@@ -82,6 +107,14 @@
       template="templates/stats.pt"
       layer=".interfaces.ILayer"
       permission="cmf.ManagePortal"
+      />
+
+  <browser:page
+      name="linkcheck"
+      for="Products.CMFCore.interfaces.IContentish"
+      class=".browser.CheckLinks"
+      permission="zope.Public"
+      layer=".interfaces.ILayer"
       />
 
 </configure>

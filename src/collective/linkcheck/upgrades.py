@@ -1,12 +1,15 @@
-from .interfaces import ISettings
+# -*- coding: utf-8 -*-
 from BTrees.IIBTree import IISet
 from Products.CMFCore.utils import getToolByName
+from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.queue import CompositeQueue
 from logging import getLogger
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
 PROFILE_ID = 'profile-collective.linkcheck:default'
 logger = getLogger("collective.linkcheck")
+_marker = object()
 
 
 def upgrade_tool(tool):
@@ -52,3 +55,24 @@ def update_registry(context):
     if not hasattr(settings, "report_urls_count"):
         settings.report_urls_count = 20
     logger.info("Updated registry entries")
+
+
+def update_registry_2(context):
+    """Next registry entry"""
+    setup_tool = getToolByName(context, 'portal_setup')
+    setup_tool.runImportStepFromProfile(PROFILE_ID, 'plone.app.registry')
+
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(ISettings, check=False)
+    if getattr(settings, "check_on_request", _marker) is not _marker:
+        settings.check_on_request = True
+    if getattr(settings, "content_types", _marker) is not _marker:
+        settings.content_types = ()
+    if getattr(settings, "timeout", _marker) is not _marker:
+        settings.timeout = 5
+    if getattr(settings, "workflow_states", _marker) is not _marker:
+        settings.content_types = ()
+    logger.info("Updated registry entries")
+    linkcheck_tool = getToolByName(context, 'portal_linkcheck')
+    if not hasattr(linkcheck_tool, "crawl_queue"):
+        linkcheck_tool.crawl_queue = CompositeQueue()

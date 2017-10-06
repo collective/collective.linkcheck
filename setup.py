@@ -10,7 +10,7 @@ def read(*pathnames):
     return open(os.path.join(os.path.dirname(__file__), *pathnames)).read().\
            decode('utf-8')
 
-version = '1.3.dev0'
+version = '1.5.dev0'
 
 setup(name='collective.linkcheck',
       version=version,
@@ -41,8 +41,10 @@ setup(name='collective.linkcheck',
       install_requires=[
           'setuptools',
           'zc.queue >= 1.3',
-          'requests < 1.0.0',
+          'requests',
           'plone.z3cform',
+          'plone.api',
+          'tablib',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]

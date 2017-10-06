@@ -1,7 +1,8 @@
-from zope.interface import Interface
-from zope import schema
-
+# -*- coding: utf-8 -*-
 from collective.linkcheck import MessageFactory as _
+from zope import schema
+from zope.interface import Interface
+from zope.interface import Invalid
 
 
 class ILayer(Interface):
@@ -10,6 +11,13 @@ class ILayer(Interface):
 
 class ILinkCheckTool(Interface):
     """Tool that performs link validity checking and reporting."""
+
+
+def valid_auth(value):
+    for entry in value:
+        if entry.count('|') < 2:
+            raise Invalid(_(u"Each entry must contain at least two '|'"))
+    return True
 
 
 class ISettings(Interface):
@@ -25,6 +33,14 @@ class ISettings(Interface):
         title=_(u'Concurrency'),
         description=_(u'This decides the number of simultaneous downloads.'),
         required=True,
+        default=5,
+        )
+
+    timeout = schema.Int(
+        title=_(u'Timeout'),
+        description=_(u'The timeout in seconds. Increase when using a '
+                      u'slow network/proxy or link to slow sites.'),
+        required=False,
         default=5,
         )
 
@@ -82,3 +98,41 @@ class ISettings(Interface):
             u"^http://t.co",
             ),
         )
+
+    check_on_request = schema.Bool(
+        title=_(u'Check on every request'),
+        description=_(u'Select this option to check the links on every '
+                      u'request. When disabled checks will be made only on '
+                      u'explicit request.'),
+        required=False,
+        default=True,
+        )
+
+    content_types = schema.Tuple(
+        title=_('Content types to check'),
+        description=_('Content types to check on crawling and updating'),
+        required=False,
+        default=(),
+        missing_value=(),
+        value_type=schema.Choice(
+            vocabulary='plone.app.vocabularies.PortalTypes')
+        )
+
+    workflow_states = schema.Tuple(
+        title=_('Workflow states to check'),
+        description=_('Check items in these states on crawling and updating'),
+        required=False,
+        default=(),
+        missing_value=(),
+        value_type=schema.Choice(
+            source='plone.app.vocabularies.WorkflowStates')
+        )
+
+    auth_list = schema.Tuple(
+        title=_(u'Authentification'),
+        description=_(u'Links to adresses which use Basic Auth. Format is URL|USERNAME|PASSWORD separated by "|" (the password can contain that caracter).'),  # noqa: E501
+        value_type=schema.TextLine(),
+        default=(),
+        required=False,
+        constraint=valid_auth,
+    )

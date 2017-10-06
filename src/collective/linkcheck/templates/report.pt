@@ -19,7 +19,7 @@
       <th i18n:translate="">URL</th>
       <th i18n:translate="">Status</th>
       <th i18n:translate="">Age</th>
-      <th class="nosort" i18n:translate="">Retry</th>
+      <th class="nosort" i18n:translate="">Action</th>
     </tr>
   </thead>
   <tbody>
@@ -69,12 +69,19 @@
         </span>
       </td>
       <td>
-        <a tal:condition="not: entry/queued"
-           tal:omit-tag="not: entry/quoted_url"
-           tal:attributes="href string:${view/enqueue_url}?enqueue=${entry/quoted_url}">
-          <span i18n:translate="">Enqueue</span>
-          <img tal:attributes="src string:${view/portal_url}/add_icon.png" />
-        </a>
+        <tal:block tal:condition="not: entry/queued">
+          <a tal:omit-tag="not: entry/quoted_url"
+             tal:attributes="href string:${view/action_url}?enqueue=${entry/quoted_url}">
+            <span i18n:translate="">Enqueue</span>
+            <img tal:attributes="src string:${view/portal_url}/add_icon.png" />
+          </a>
+          <br />
+          <a tal:omit-tag="not: entry/quoted_url"
+             tal:attributes="href string:${view/action_url}?remove=${entry/quoted_url}">
+            <span i18n:translate="">Remove</span>
+            <img tal:attributes="src string:${view/portal_url}/delete_icon.png" />
+          </a>
+        </tal:block>
         <span tal:condition="entry/queued" i18n:translate="">
           In queue
         </span>
@@ -82,3 +89,18 @@
     </tr>
   </tbody>
 </table>
+<!--p i18n:domain="collective.linkcheck" i18n:translate="">Crawling queue</p-->
+<!--table id="linkcheck-crawl" class="listing" i18n:domain="collective.linkcheck">
+  <thead>
+    <tr>
+      <th i18n:translate="">Object</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr tal:repeat="entry view/crawling_data">
+      <td>
+        <a tal:attributes="href entry/getURL" tal:content="entry/Title" />
+      </td>
+    </tr>
+  </tbody>
+</table-->

@@ -1,14 +1,70 @@
 Changes
 =======
 
-1.3 (unreleased)
+1.5 (unreleased)
 ----------------
 
-- added german translations
+- Update german translations
+  [pbauer]
+
+- Clear before crawling site
+  [pbauer]
+
+- Catch error when auth is empty
+  [pbauer]
+
+- Add fallbacks when trying to remove empty entries
+  [pbauer]
+
+
+1.4.dev1_gww (2017-03-22)
+-------------------------
+
+- Nothing changed yet.
+
+
+1.3.dev1_gww (2017-03-22)
+-------------------------
+
+- Allow to export the report about broken links report in various formats.
+  Call @@linkcheck-export?export_type=json for the view. Supported formats are
+  csv, xlsx, xls, tsv, yaml, html and json.
+  [pbauer]
+
+- Add a setting to select workflow-states to check on crawl and update.
+  [pbauer]
+
+- Add timeout setting.
+  [pbauer]
+
+- Allow recent versions of Requests.
+  [pbauer]
+
+- Add a setting to select portal_types to check on crawl and update.
+  [lewicki]
+
+- Add a view @@linkcheck to check links from object context
+  [lewicki]
+
+- Add setting to disable event triggering on each request.
+  [lewicki]
+
+- Handle mailto links
+  [Jörg Kubaile]
+
+- Handle relative urls
+  [Toni Fischer]
+
+- Add link to remove entry from the report list
+  [Jörg Kubaile]
+
+- Added german translations
   [petschki]
-- added https://raw.github.com/github/gitignore/master/Plone.gitignore
+
+- Added .gitignore
   [petschki]
-- add upgrade step for new registry entry
+
+- Add upgrade step for new registry entry
   [petschki]
 
 1.2 (2012-11-22)

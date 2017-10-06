@@ -1,18 +1,22 @@
-import time
+# -*- coding: utf-8 -*-
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from ZODB.POSException import ConflictError
+from cStringIO import StringIO
+from collective.linkcheck.interfaces import ILayer
+from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.parse import iter_links
+from plone import api
+from plone.registry.interfaces import IRegistry
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
+
 import datetime
-import logging
 import gzip
+import logging
+import time
 import transaction
 
-from zope.annotation.interfaces import IAnnotations
-from cStringIO import StringIO
-
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.CMFCore.utils import getToolByName
-from ZODB.POSException import ConflictError
-
-from .interfaces import ILayer
-from .parse import iter_links
 
 logger = logging.getLogger("linkcheck.events")
 
@@ -25,6 +29,11 @@ def before_traverse(event):
 
 
 def end_request(event):
+
+    # Skip control panel view.
+    if '@@linkcheck-controlpanel' in event.request['PATH_INFO']:
+        return
+
     # Ignore internal requests.
     if event.request.get('HTTP_USER_AGENT') == 'Bobo':
         return
@@ -42,6 +51,12 @@ def end_request(event):
         tool = getToolByName(site, 'portal_linkcheck')
     except AttributeError as exc:
         logger.warn("Did not find tool: %s." % exc)
+        return
+
+    # No processing if 'check_on_request' setting is false
+    registry = getUtility(IRegistry, context=site)
+    settings = registry.forInterface(ISettings)
+    if not settings.check_on_request:
         return
 
     # Must be HTML.
@@ -64,14 +79,11 @@ def end_request(event):
         return
 
     path = actual_url[len(base_url):]
+
     tool.update(path, status)
 
     # Must be good response.
     if status != 200:
-        return
-
-    # Skip control panel view.
-    if '@@linkcheck-controlpanel' in event.request['PATH_INFO']:
         return
 
     try:
@@ -80,6 +92,9 @@ def end_request(event):
         encoding = "latin-1"
 
     body = response.body
+    if not body:
+        return
+
     if response.headers.get('content-encoding') == 'gzip':
         try:
             body = gzip.GzipFile(fileobj=StringIO(body)).read()
@@ -94,10 +109,22 @@ def end_request(event):
         return
 
     hrefs = set()
+
     for href in iter_links(document):
+
         # Ignore anchors and javascript.
         if href.startswith('#') or href.startswith('javascript:'):
             continue
+
+        # Ignore mailto links
+        if href.startswith('mailto:'):
+            continue
+
+        # handle relative urls
+        if href.startswith('.') or (
+                not href.startswith('/') and
+                '://' not in href):
+            href = '/'.join((actual_url, href))
 
         # Internal URLs are stored site-relative.
         if href.startswith(base_url):
@@ -116,7 +143,7 @@ def end_request(event):
     date = now - datetime.timedelta(days=1)
     yesterday = int(time.mktime(date.timetuple()))
 
-    #referer is nothing else than the actual_url. HTTP_HOST and PATH_INFO
+    # referer is nothing else than the actual_url. HTTP_HOST and PATH_INFO
     # give wrong URLs in VirtualHosting
 
     # Update link database
@@ -129,3 +156,26 @@ def end_request(event):
         transaction.commit()
     except ConflictError:
         transaction.abort()
+
+
+def modified_object(obj, event):
+    if not ILayer.providedBy(obj.REQUEST):
+        return
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(ISettings)
+    types_to_check = settings.content_types
+    if types_to_check and obj.portal_type not in types_to_check:
+        return
+    states_to_check = settings.workflow_states
+    if states_to_check and api.content.get_state(obj) not in states_to_check:
+        return
+
+    # I may find a way to process crawling asynchronously.
+    # Right now there is a problem with traversal in a worker
+    # tool = api.portal.get_tool('portal_linkcheck')
+    # tool.crawl_enqueue(obj.UID())
+    # return
+    check_links_view = obj.restrictedTraverse('@@linkcheck')
+    check_links_view()
+    logger.info(
+        'Checked links for modified {0}'.format(obj.absolute_url()))
