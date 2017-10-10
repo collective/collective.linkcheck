@@ -1,3 +1,5 @@
 graft src/collective
 include *.rst
 global-exclude *.pyc
+include *.GPL
+include *.txt
