@@ -14,7 +14,7 @@ long_description = '\n\n'.join([
 
 setup(
     name='collective.linkcheck',
-    version='1.5.dev0',
+    version='1.5',
     description="Add-on for Plone that provides link validity checking and reporting.",
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers
