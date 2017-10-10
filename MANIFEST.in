@@ -1,4 +1,3 @@
-recursive-include src *
-recursive-include docs *
-include *
+graft src/collective
+include *.rst
 global-exclude *.pyc

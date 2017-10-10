@@ -3,7 +3,7 @@ processing items in the background.
 
 ZEO or other shared storage is required.
 
-Compatibility: Plone 4+.
+Compatibility: Plone 4+, Plone 5
 
 
 Setup
