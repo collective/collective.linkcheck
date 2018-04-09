@@ -198,7 +198,7 @@ class ControlPanelEditForm(controlpanel.RegistryEditForm):
                 break
 
             # We might want to ignore certain error-codes
-            if str(entry[1]) in settings.ignore_errorcodes:
+            if settings.ignore_errorcodes and str(entry[1]) in settings.ignore_errorcodes:  # noqa: E501
                 break
 
             # Or hit the maximum row count.
