@@ -45,6 +45,15 @@
       handler=".upgrades.update_registry_2"
       />
 
+  <genericsetup:upgradeStep
+      source="1301"
+      destination="1302"
+      profile="collective.linkcheck:default"
+      title="Reload registry entries"
+      description=""
+      handler=".upgrades.update_registry"
+      />
+
   <i18n:registerTranslations directory="locales" />
 
   <!-- Lifecycle events -->

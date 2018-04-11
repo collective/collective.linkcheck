@@ -5,15 +5,19 @@ from ZODB.POSException import ConflictError
 from cStringIO import StringIO
 from collective.linkcheck.interfaces import ILayer
 from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.parse import get_portal_type
 from collective.linkcheck.parse import iter_links
 from plone import api
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.registry.interfaces import IRegistry
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+from zope.component import queryUtility
 
 import datetime
 import gzip
 import logging
+import re
 import time
 import transaction
 
@@ -78,6 +82,10 @@ def end_request(event):
     if not actual_url.startswith(base_url):
         return
 
+    # Skip if the url is in the list of referers to ignore
+    if should_ignore(actual_url, settings.ignore_referers):
+        return
+
     path = actual_url[len(base_url):]
 
     tool.update(path, status)
@@ -107,6 +115,16 @@ def end_request(event):
     except UnicodeDecodeError as exc:
         logger.warn(exc)
         return
+
+    # Only check selected content types. This is pretty brittle since
+    # it checks for the portal_type as css-class in the body-tag.
+    # A theme might drop that info. Also: We cannot filter by review_state
+    if settings.content_types:
+        portal_type = get_portal_type(document)
+        normalizer = queryUtility(IIDNormalizer)
+        check = [normalizer.normalize(i) for i in settings.content_types]
+        if portal_type and portal_type not in check:
+            return
 
     hrefs = set()
 
@@ -179,3 +197,23 @@ def modified_object(obj, event):
     check_links_view()
     logger.info(
         'Checked links for modified {0}'.format(obj.absolute_url()))
+
+
+def get_matchers(ignore_list):
+    matchers = []
+    for expression in ignore_list:
+        try:
+            matcher = re.compile(expression).search
+        except re.error:
+            pass
+        else:
+            matchers.append(matcher)
+
+    return matchers
+
+
+def should_ignore(href, ignore_list):
+    for matcher in get_matchers(ignore_list):
+        if matcher(href):
+            return True
+    return False

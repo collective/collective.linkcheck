@@ -99,18 +99,46 @@ class ISettings(Interface):
             ),
         )
 
+    ignore_referers = schema.Tuple(
+        title=_(u'Ignore certain pages'),
+        description=_(u'Use regular expressions to prevent content '
+                      u'from being checked for broken links. '
+                      u'One expression per line (e.g. "/@@edit$" or '
+                      u'"/some_section/somefolder_to_ignore/").'),
+        required=False,
+        value_type=schema.TextLine(),
+        default=(
+            u"/\+\+add\+\+"
+            u"/folder_contents$",
+            u"/manage_",
+            u"/@@sharing$",
+            u"/sitemap$",
+            ),
+        )
+
+    ignore_errorcodes = schema.Tuple(
+        title=_(u'Ignore the following error-codes.'),
+        description=_(u'Prevent certain status-codes '
+                      u'from appearing in the report. One number per '
+                      u'line (e.g. "301" to hide redirects).'),
+        required=False,
+        value_type=schema.TextLine(),
+        default=(),
+        )
+
     check_on_request = schema.Bool(
         title=_(u'Check on every request'),
         description=_(u'Select this option to check the links on every '
                       u'request. When disabled checks will be made only on '
-                      u'explicit request.'),
+                      u'explicit request. Ignored types (see below) will be '
+                      u'skipped but the workflow-state-setting is ignored.'),
         required=False,
         default=True,
         )
 
     content_types = schema.Tuple(
         title=_('Content types to check'),
-        description=_('Content types to check on crawling and updating'),
+        description=_('Content types to check on request, crawl and update'),
         required=False,
         default=(),
         missing_value=(),

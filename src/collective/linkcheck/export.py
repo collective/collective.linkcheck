@@ -48,6 +48,10 @@ class Export(BrowserView):
             if entry[1] == 200:
                 break
 
+            # We might want to ignore certain error-codes
+            if settings.ignore_errorcodes and str(entry[1]) in settings.ignore_errorcodes:  # noqa: E501
+                break
+
             url = tool.links[i]
             referers = filter(None, map(tool.links.get, entry[2]))[:settings.referers]  # noqa
 
@@ -67,24 +71,24 @@ class Export(BrowserView):
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',  # noqa
                 'xlsx')
 
-        if export_type == 'xls':
+        elif export_type == 'xls':
             result = dataset.xls
             return self.export_file(
                 result, 'application/vnd.ms-excel', 'xls')
 
-        if export_type == 'tsv':
+        elif export_type == 'tsv':
             result = dataset.tsv
             return self.export_file(
                 result, 'text/tab-separated-values', 'tsv')
 
-        if export_type == 'yaml':
+        elif export_type == 'yaml':
             result = dataset.yaml
             return self.export_file(result, 'text/yaml', 'yaml')
 
-        if export_type == 'html':
+        elif export_type == 'html':
             return dataset.html
 
-        if export_type == 'json':
+        elif export_type == 'json':
             pretty = json.dumps(data, sort_keys=True, indent=4)
             self.request.response.setHeader('Content-type', 'application/json')
             return pretty

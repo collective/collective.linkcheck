@@ -121,8 +121,6 @@ class LinkCheckTool(SimpleItem):
         database).
         """
 
-        referer = self.index.get(referer) or self.store(referer)
-
         registry = getUtility(IRegistry, context=self.aq_parent)
         try:
             settings = registry.forInterface(ISettings)
@@ -130,7 +128,11 @@ class LinkCheckTool(SimpleItem):
             logger.warn(exc)
             return
 
+        if self.should_ignore(referer, settings.ignore_referers):
+            return
+
         limit = settings.referers
+        referer = self.index.get(referer) or self.store(referer)
 
         for href in hrefs:
             if self.should_ignore(href, settings.ignore_list):

@@ -4,7 +4,8 @@ Changes
 1.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add the option to skip checking certains pages and ignore certain error-codes
+  [pbauer]
 
 
 1.5 (2017-10-10)
