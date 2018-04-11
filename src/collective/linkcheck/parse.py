@@ -53,3 +53,26 @@ def iter_links(body):
 
         if href:
             yield href
+
+
+def get_portal_type(body):
+    """In default plone the portal_type is added to the body as a css-class
+    We extract it to be able to filter objects by type.
+    """
+    try:
+        html = lxml.html.fromstring(body)
+    except (lxml.etree.ParseError, lxml.etree.ParserError) as exc:
+        logger.warn(exc)
+        return
+
+    body_tag = html.find('body')
+    if body_tag is None:
+        return
+
+    classes = body_tag.get('class')
+    if not classes:
+        return
+
+    for css_class in classes.split():
+        if css_class.startswith('portaltype-'):
+            return css_class[11:]

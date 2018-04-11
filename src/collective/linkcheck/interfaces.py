@@ -130,14 +130,15 @@ class ISettings(Interface):
         title=_(u'Check on every request'),
         description=_(u'Select this option to check the links on every '
                       u'request. When disabled checks will be made only on '
-                      u'explicit request.'),
+                      u'explicit request. Ignored types (see below) will be '
+                      u'skipped but the workflow-state-setting is ignored.'),
         required=False,
         default=True,
         )
 
     content_types = schema.Tuple(
         title=_('Content types to check'),
-        description=_('Content types to check on crawling and updating'),
+        description=_('Content types to check on request, crawl and update'),
         required=False,
         default=(),
         missing_value=(),

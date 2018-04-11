@@ -5,11 +5,14 @@ from ZODB.POSException import ConflictError
 from cStringIO import StringIO
 from collective.linkcheck.interfaces import ILayer
 from collective.linkcheck.interfaces import ISettings
+from collective.linkcheck.parse import get_portal_type
 from collective.linkcheck.parse import iter_links
 from plone import api
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.registry.interfaces import IRegistry
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+from zope.component import queryUtility
 
 import datetime
 import gzip
@@ -112,6 +115,16 @@ def end_request(event):
     except UnicodeDecodeError as exc:
         logger.warn(exc)
         return
+
+    # Only check selected content types. This is pretty brittle since
+    # it checks for the portal_type as css-class in the body-tag.
+    # A theme might drop that info. Also: We cannot filter by review_state
+    if settings.content_types:
+        portal_type = get_portal_type(document)
+        normalizer = queryUtility(IIDNormalizer)
+        check = [normalizer.normalize(i) for i in settings.content_types]
+        if portal_type and portal_type not in check:
+            return
 
     hrefs = set()
 
