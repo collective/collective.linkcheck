@@ -14,6 +14,7 @@ from zope.component import getUtility
 import datetime
 import gzip
 import logging
+import re
 import time
 import transaction
 
@@ -76,6 +77,10 @@ def end_request(event):
     base_url = site.absolute_url()
     actual_url = event.request.get('ACTUAL_URL', '')
     if not actual_url.startswith(base_url):
+        return
+
+    # Skip if the url is in the list of referers to ignore
+    if should_ignore(actual_url, settings.ignore_referers):
         return
 
     path = actual_url[len(base_url):]
@@ -179,3 +184,23 @@ def modified_object(obj, event):
     check_links_view()
     logger.info(
         'Checked links for modified {0}'.format(obj.absolute_url()))
+
+
+def get_matchers(ignore_list):
+    matchers = []
+    for expression in ignore_list:
+        try:
+            matcher = re.compile(expression).search
+        except re.error:
+            pass
+        else:
+            matchers.append(matcher)
+
+    return matchers
+
+
+def should_ignore(href, ignore_list):
+    for matcher in get_matchers(ignore_list):
+        if matcher(href):
+            return True
+    return False

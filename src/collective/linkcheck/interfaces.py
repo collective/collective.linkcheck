@@ -101,9 +101,10 @@ class ISettings(Interface):
 
     ignore_referers = schema.Tuple(
         title=_(u'Ignore certain pages'),
-        description=_(u'Use regular expressions to prevent pages '
+        description=_(u'Use regular expressions to prevent content '
                       u'from being checked for broken links. '
-                      u'One expression per line (e.g. "/@@edit").'),
+                      u'One expression per line (e.g. "/@@edit$" or '
+                      u'"/some_section/somefolder_to_ignore/").'),
         required=False,
         value_type=schema.TextLine(),
         default=(
