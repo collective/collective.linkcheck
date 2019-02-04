@@ -4,7 +4,8 @@ Changes
 1.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Ignore "tel:" links.
+  [tmassman]
 
 
 1.5 (2017-10-10)
