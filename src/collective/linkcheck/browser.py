@@ -96,6 +96,10 @@ class CheckLinks(BrowserView):
             if href.startswith('mailto:'):
                 continue
 
+            # Ignore tel links
+            if href.startswith('tel:'):
+                continue
+
             # handle relative urls
             if href.startswith('.') or (
                     not href.startswith('/') and
