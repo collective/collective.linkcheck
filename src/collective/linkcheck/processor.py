@@ -9,6 +9,7 @@ from collective.linkcheck.interfaces import ISettings
 from collective.linkcheck.parse import iter_links
 from itertools import ifilterfalse, tee, ifilter
 from plone.registry.interfaces import IRegistry
+from plone import api
 from zExceptions import Unauthorized
 from zope.component import getUtility
 
@@ -177,7 +178,7 @@ def run(app, args, rate=5):
 
                 logger.info("found site '%s'." % name)
 
-                registry = getUtility(IRegistry, context=item)
+                registry = api.portal.get_tool('portal_registry')
 
                 try:
                     settings = registry.forInterface(ISettings)
