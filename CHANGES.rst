@@ -4,7 +4,8 @@ Changes
 1.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- use plone.api to get the registry refs #11 
+  [cdw9]
 
 
 1.5 (2017-10-10)
