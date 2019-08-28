@@ -38,7 +38,8 @@ def iter_links(body):
             assert i > -1
 
             if i == 0:
-                continue
+                href = ''
+                break
 
             previous = href.rfind('/', 0, i - 1)
             after = href[i + 3:]
