@@ -90,8 +90,12 @@ class LinkCheckTool(SimpleItem):
             # asyncronous crawling not working yet
             # self.crawl_enqueue(brain.UID)
 
-            obj = brain.getObject()
-            obj.restrictedTraverse('@@linkcheck')()
+            try:
+                obj = brain.getObject()
+                obj.restrictedTraverse('@@linkcheck')()
+            except AttributeError:
+                logger.info('Crawling: skipped {0}'.format(brain.getURL()))
+                continue
             logger.info('Crawling: checked {0}'.format(brain.getURL()))
 
     security.declarePrivate("enqueue")
